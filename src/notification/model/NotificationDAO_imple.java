@@ -48,10 +48,10 @@ public class NotificationDAO_imple implements NotificationDAO {
 	public List<NotificationDTO> getNotificationList(boolean isAdmin) {
 		List<NotificationDTO> noticeList = new ArrayList<>();
 
-		String sql = " select notification_id, name, to_char(registerday, 'yyyy-mm-dd') as registerday, fix,"
+		String sql = " select notification_id, name, to_char(registerday, 'yyyy-mm-dd') as registerday, fix, to_char(updateday, 'yyyy-mm-dd') as updateday, "
 				+ " case when length(title) > 12 then substr(title, 1, 12) || '..' else title end as title "
 				+ " from tbl_notification N join tbl_admin A on N.fk_admin_id = A.admin_id " + " where is_delete = 0 "
-				+ " order by fix desc, registerday desc";
+				+ " order by fix desc, registerday desc ";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -68,6 +68,7 @@ public class NotificationDAO_imple implements NotificationDAO {
 
 				notificationDTO.setTitle(rs.getString("title"));
 				notificationDTO.setRegisterday(rs.getString("registerday"));
+				notificationDTO.setUpdateday(rs.getString("updateday"));
 				notificationDTO.setFix(rs.getInt("fix"));
 
 				noticeList.add(notificationDTO);
@@ -118,7 +119,7 @@ public class NotificationDAO_imple implements NotificationDAO {
 	public NotificationDTO getNotificationDetails(boolean isAdmin, int notificationId) {
 		NotificationDTO notificationDTO = new NotificationDTO();
 
-		String sql = " select notification_id, name, title, contents, to_char(registerday, 'yyyy-mm-dd') as registerday, fix "
+		String sql = " select notification_id, name, title, contents, to_char(registerday, 'yyyy-mm-dd') as registerday, fix, to_char(updateday, 'yyyy-mm-dd') as updateday "
 				+ " from tbl_notification N join tbl_admin A on N.fk_admin_id = A.admin_id "
 				+ " where is_delete = 0 and notification_id = ? ";
 
@@ -140,6 +141,7 @@ public class NotificationDAO_imple implements NotificationDAO {
 				notificationDTO.setTitle(rs.getString("title"));
 				notificationDTO.setContents(rs.getString("contents"));
 				notificationDTO.setRegisterday(rs.getString("registerday"));
+				notificationDTO.setUpdateday(rs.getString("updateday"));
 				notificationDTO.setFix(rs.getInt("fix"));
 			} else {
 				notificationDTO = null;
