@@ -43,7 +43,7 @@ public class AdminController {
 
 	private final NotificationController notificationController = new NotificationController(); // 공지사항 Controller 인스턴스
 	
-	private final StatisticsController statisticsController = new StatisticsController(); // 통계 조회 Controller 인스턴스
+	//private final StatisticsController statisticsController = new StatisticsController(); // 통계 조회 Controller 인스턴스
 
 	private StringBuilder sb = new StringBuilder(); // StringBuilder 객체 초기화
 
@@ -127,7 +127,7 @@ public class AdminController {
 				break;
 			}
 			case "5": { // 통계
-				statisticsController.statisticsMenu(adminDTO, sc);
+				//statisticsController.statisticsMenu(adminDTO, sc);
 				break;
 			}
 			default:

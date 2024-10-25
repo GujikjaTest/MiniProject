@@ -9,6 +9,7 @@ import apply.domain.ApplyDTO;
 import apply.model.ApplyDAO;
 import apply.model.ApplyDAO_imple;
 import common.Transaction;
+import recruitment.controller.RecruitmentController;
 import recruitment.domain.RecruitmentDTO;
 import recruitment.model.RecruitmentDAO;
 import recruitment.model.RecruitmentDAO_imple;
@@ -19,6 +20,52 @@ public class Applycontroller {
 
 	RecruitmentDAO rdao = new RecruitmentDAO_imple();
 	ApplyDAO adao = new ApplyDAO_imple();
+	
+	public void showAllapply(String applicant_Id) {		// 입사지원 현황
+		RecruitmentController RecruitmentController = new RecruitmentController();
+		
+		//입사지원서 출력 메소드
+		show_motivation_Apply(applicant_Id); 
+			
+	}
+	
+	//입사지원서 출력 메소드
+		private void show_motivation_Apply(String applicant_Id) {
+			
+			
+			StringBuilder sb = new StringBuilder();
+			List<ApplyDTO> applyList = adao.InfoApply(applicant_Id); //DAO_imple 이동 
+			
+			if(applyList == null) {	// 입사지원서가 존재하지 않는 경우
+				System.out.println("\n>> [경고] 응모된 입사지원서가 없습니다. <<\n");
+				
+				return;	// 메소드 종료
+			}
+			
+			// 입사지원서가 존재하는 경우 
+			for(int i=0;i<applyList.size();i++) {
+				
+				sb.append(
+						  "\n-< "+ applyList.get(i).getRecruitmentDTO().getRecruitmentId() +"번 채용공고 >------------------------------\n"+
+						  "1.회사명 : " 		+ applyList.get(i).getCompanyDTO().getName()+"\n"+ //회사 아이디를 통해 
+						  "2.채용제목 : " 		+ applyList.get(i).getRecruitmentDTO().getTitle() + "\n" +  
+						  "3.채용내용 : " 		+ applyList.get(i).getRecruitmentDTO().getContents() + "\n" + 
+						  "4.직종 : "			+ applyList.get(i).getJobDTO().getName()+"\n" + 	//직종 일련번호를 통해
+						  "5.경력 : " 		+ Transaction.experience(applyList.get(i).getRecruitmentDTO().getExperience())  + "\n" + 
+						  "6.채용형태 : " 		+ Transaction.empType(applyList.get(i).getRecruitmentDTO().getEmpType())  + "\n" + 
+						  "7.지역 : " 		+ applyList.get(i).getCompanyDTO().getAddress() +  "\n" +     //회사아이디를 통해 구인회사테이블에서 추출
+						  "8.채용인원 : " 		+ applyList.get(i).getRecruitmentDTO().getPeople() + "\n" + 
+						  "9.연봉 : " 		+ applyList.get(i).getRecruitmentDTO().getSalary() + "만원\n" + 
+						  "10.등록일자 : "		+ applyList.get(i).getRecruitmentDTO().getRegisterday() + "\n" + 
+						  "11.채용마감일자 : " 	+ applyList.get(i).getRecruitmentDTO().getDeadlineday() +  "\n" + 
+						  "-".repeat(50)+"\n" +
+						  "▣ 지원동기 : "		+ applyList.get(i).getMotivation() + "\n" + 
+						  "▣ 지원일자 : " 	+ applyList.get(i).getRegisterday() +"\n");
+				
+			}//end of for -------------
+			
+			System.out.println(sb.toString());
+		} //end of private void show_motivation_Apply(String applicant_Id) -------
 	
 	
 	// 해당하는 공고의 지원자들을 출력하는 메소드
@@ -107,5 +154,8 @@ public class Applycontroller {
 		}
 		
 	}
+
+
+
 	
 }

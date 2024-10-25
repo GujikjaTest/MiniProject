@@ -32,6 +32,9 @@ public interface ResumeDAO {
 	// *** 구직자 인기 희망직종 통계 *** //
 	List<String[]> getHopeJobRatio();
 
+	// *** 입사지원 중복체크 메서드 *** //
+	boolean apply_Duplication_Check(String recruitmentId,boolean result,ApplicantDTO applicant); //불리언으로 수정
+
 	
 
 	

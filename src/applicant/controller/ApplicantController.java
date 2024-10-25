@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import applicant.domain.ApplicantDTO;
 import applicant.model.*;
+import apply.controller.Applycontroller;
 import recruitment.controller.RecruitmentApplicantController;
 import resume.controller.Resumecontroller;
 //import review.controller.ReviewController;
@@ -181,6 +182,8 @@ public class ApplicantController {
 			
 			case "5": // 입사지원 현황
 				// 이상우
+				Applycontroller applycontroller = new Applycontroller();
+				applycontroller.showAllapply(applicant.getApplicantId() );
 				break;
 			
 			case "6": // 리뷰 작성 - 김규빈

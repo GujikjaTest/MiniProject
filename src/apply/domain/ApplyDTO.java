@@ -2,10 +2,13 @@ package apply.domain;
 
 import applicant.domain.ApplicantDTO;
 import resume.domain.ResumeDTO;
+import company.domain.CompanyDTO;
+import job.domain.JobDTO;
+import recruitment.domain.RecruitmentDTO;
 
 public class ApplyDTO {
 	
-	// field, attribute, property, 속성
+	// insert field, attribute, property, 속성
 	
 	private int apply_id; 			/* 입사지원서일련번호 */
 	private int fk_recruitment_id;  /* 채용공고일련번호 */
@@ -17,6 +20,11 @@ public class ApplyDTO {
 	private ResumeDTO resumeDTO;	/* 이력서 조인용 */
 	
 	private ApplicantDTO applicantDTO;	/* 회원 조인용 */
+	
+	// select field
+	private RecruitmentDTO recruitmentDTO;
+	private CompanyDTO companyDTO;
+	private JobDTO jobDTO;
 	
 	
 	// method, operation, 기능
@@ -57,6 +65,26 @@ public class ApplyDTO {
 	}
 	public void setUpdateday(String updateday) {
 		this.updateday = updateday;
+	}
+	
+	
+	public RecruitmentDTO getRecruitmentDTO() {
+		return recruitmentDTO;
+	}
+	public void setRecruitmentDTO(RecruitmentDTO recruitmentDTO) {
+		this.recruitmentDTO = recruitmentDTO;
+	}
+	public CompanyDTO getCompanyDTO() {
+		return companyDTO;
+	}
+	public void setCompanyDTO(CompanyDTO companyDTO) {
+		this.companyDTO = companyDTO;
+	}
+	public JobDTO getJobDTO() {
+		return jobDTO;
+	}
+	public void setJobDTO(JobDTO jobDTO) {
+		this.jobDTO = jobDTO;
 	}
 
 	
