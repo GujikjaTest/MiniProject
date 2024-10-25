@@ -1,5 +1,8 @@
 package apply.domain;
 
+import applicant.domain.ApplicantDTO;
+import resume.domain.ResumeDTO;
+
 public class ApplyDTO {
 	
 	// field, attribute, property, 속성
@@ -11,9 +14,13 @@ public class ApplyDTO {
 	private String motivation; 		/* 지원동기 */
 	private String updateday;		/* 최신수정일 */
 	
+	private ResumeDTO resumeDTO;	/* 이력서 조인용 */
+	
+	private ApplicantDTO applicantDTO;	/* 회원 조인용 */
 	
 	
 	// method, operation, 기능
+	
 	
 	public int getApply_id() {
 		return apply_id;
@@ -52,4 +59,19 @@ public class ApplyDTO {
 		this.updateday = updateday;
 	}
 
+	
+	
+	public ResumeDTO getResumeDTO() {
+		return resumeDTO;
+	}
+	public void setResumeDTO(ResumeDTO resumeDTO) {
+		this.resumeDTO = resumeDTO;
+	}
+	public ApplicantDTO getApplicantDTO() {
+		return applicantDTO;
+	}
+	public void setApplicantDTO(ApplicantDTO applicantDTO) {
+		this.applicantDTO = applicantDTO;
+	}
+	
 }
