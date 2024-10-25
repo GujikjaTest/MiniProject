@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import common.Transaction;
@@ -13,7 +14,7 @@ import recruitment.domain.RecruitmentDTO;
 import recruitment.model.*;
 import utils.AlignUtil;
 import utils.Msg;
-import apply.controller.Applycontroller;
+import apply.controller.ApplyController;
 import apply.domain.ApplyDTO;
 import apply.model.*;
 import job.model.*;
@@ -26,7 +27,7 @@ public class RecruitmentController {
 	JobDAO jdao = new JobDAO_imple();
 	List<RecruitmentDTO> RecruitmentList;
 	JobController jCtrl = new JobController();
-	Applycontroller applyCtrl = new Applycontroller();
+	ApplyController applyCtrl = new ApplyController();
 	
 	// method
 	
@@ -639,6 +640,59 @@ public class RecruitmentController {
 		return result;
 		
 	} // end of private void recruitmentDelete(RecruitmentDTO recruitmentDTO, Scanner sc)---------
+
 	
+	// === 채용공고 통계 조회 메뉴 === //
+	public void recruitmentStatistics(Scanner sc) {
+		System.out.println("=== 채용공고 통계 조회 ===");
+		
+		System.out.print(AlignUtil.title("=메뉴 선택")
+					   + "1.직종별 채용공고 수 순위   2.직종별 평균 연봉 순위\n"
+					   + "0.돌아가기\n"
+					   + "=".repeat(50)+"\n"
+					   + "▷ 메뉴 번호 선택 : ");
+		
+		String menu = sc.nextLine();
+		switch (menu) {
+		case "0":
+			return;
+		case "1": // 직종별 채용공고 순위
+			getRecruitmentStatistics(menu);
+			break;
+		case "2": // 직종별 연봉 순위
+			getRecruitmentStatistics(menu);
+			break;
+
+		default:
+			break;
+		}
+		
+	}
+
+
+	// === 직종별 채용공고 순위를 출력하는 메소드 === //
+	private void getRecruitmentStatistics(String status) {
+		List<Map<String, String>> rsMapList = rdao.recruitmentStatistics(status);
+		
+		
+		if(rsMapList.size()==0) {
+			Msg.N("등록된 채용공고가 없습니다.");
+		}
+		else {
+			StringBuilder sb = new StringBuilder();
+			
+			String menuStr = ("1".equals(status))?"채용공고 수":"평균 연봉";
+			sb.append(AlignUtil.title("-직종별 "+ menuStr +" 순위")
+					+ "순위\t직종\t\t"+menuStr+"\n"
+					+ "-".repeat(50)+"\n");
+			for(Map<String, String> rsMap : rsMapList) {
+				sb.append(rsMap.get("rank") + "\t"
+						+ rsMap.get("jobName") + "\t\t"
+						+ rsMap.get("result") + "\n");
+			}
+			sb.append("-".repeat(50));
+			System.out.println(AlignUtil.tab(sb).toString());
+		}
+	}
 	
 }

@@ -31,4 +31,6 @@ public interface RecruitmentDAO {
 	// 채용공고에서 회사명, 직종별, 지역별, 경력 검색
 	List<RecruitmentDTO> showAllRecruitment(Map<String, String> map);
 
+	// 직종별 top 10 채용공고 수 가져오기
+	List<Map<String, String>> recruitmentStatistics(String status);
 }
