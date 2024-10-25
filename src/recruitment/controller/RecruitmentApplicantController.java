@@ -292,17 +292,8 @@ public class RecruitmentApplicantController {
 		}
 		
 	} // end of private void recruitmentInfo(Scanner sc)---------
-
-
-
 	
-
-
-
-	// === 제목 정렬을 위한 메소드 === //
-	private String align(String str, int n) {
-	   return str +" ".repeat(n-str.length());
-	}
+	
 	
 	// *** 지원동기 입력을 위한 메소드 *** //
 	private void apply_Applicant(Scanner sc,ResumeDAO resumeDAO,ApplicantDTO applicant,String recruitmentId) {
@@ -316,8 +307,4 @@ public class RecruitmentApplicantController {
 		
 	} // end of private void apply_Applicant(Scanner sc) -----
 	
-	private String align(int no, int n) {
-		String num = String.valueOf(no);
-	    return no +" ".repeat(n-num.length());
-	}
 }
