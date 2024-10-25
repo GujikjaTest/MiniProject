@@ -28,4 +28,7 @@ public interface CompanyDAO {
 
 	// 기업형태별 회사 통계
 	Map<String, Integer> getBusinessTypeRatio();
+	
+	//검색통합
+	List<CompanyDTO> companySearchList(String searchStr, String select);
 }

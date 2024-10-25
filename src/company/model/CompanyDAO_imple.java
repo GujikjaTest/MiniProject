@@ -168,7 +168,69 @@ public class CompanyDAO_imple implements CompanyDAO {
 		return result;
 	}// end of public int cpInfoUpdate(Map<String, String> paraMap) 
 
+	@Override
+	public List<CompanyDTO> companySearchList(String searchStr, String select){
+		
+		
+		String str = "";
+		
+		switch(select){
+		case "1":
+			str = "where upper(name) like upper(?) ";
+			break;
+		case "2":
+			str = "where upper(industry) like upper(?) ";
+			break;
+		case "3":
+			str = "where upper(address) like upper(?) ";
+		}
+		
+		List<CompanyDTO> companyList = new ArrayList<>();
+	    
+	    try {
+	        String sql = " select name, industry, business_no, address, status, email, company_id, tel, "
+	                   + " case when progress is null then '채용없음' else progress end as progress "
+	                   + " from ("
+	                   + "    select name, industry, business_no, address, company_Id "
+	                   + "    from tbl_company "
+	                   + str
+	                   + " ) C "
+	                   + " LEFT JOIN "
+	                   + " ( "
+	                   + "    select case when max(deadlineday) > sysdate then '진행중' else '마감' end as progress, fk_company_id "
+	                   + "    from tbl_recruitment "
+	                   + "    group by fk_company_id "
+	                   + " ) R "
+	                   + " ON fk_company_id = company_Id ";
+	        
+	        pstmt = conn.prepareStatement(sql);
+	        
+	        pstmt.setString(1, "%"+searchStr+"%");  // 첫 번째 파라미터
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {  // 여러 행을 처리할 수 있도록 변경
+	            CompanyDTO companyDTO = new CompanyDTO();
+	            
+	            companyDTO.setName(rs.getString("name"));
+	            companyDTO.setIndustry(rs.getString("industry"));
+	            companyDTO.setBusinessNo(rs.getString("business_no"));
+	            companyDTO.setAddress(rs.getString("address"));
+	            companyDTO.setProgress(rs.getString("progress"));
+	            
+	            companyList.add(companyDTO);  // 리스트에 추가
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        close();
+	    }
+	    
+	    return companyList;
 
+
+	}//companySearchList(String searchStr, String select)---------
 
 
 	//회사명으로 조회
