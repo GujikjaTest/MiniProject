@@ -105,6 +105,8 @@ public class NotificationDTO {
 				+ " ▣ 제목 : " + (fix == 1 ? "[★]" : "") + title + "\n"
 				+ " ▣ 내용 : " + (contents == null ? "" : contents) + "\n"
 				+ " ▣ 작성자 : " + (adminName == null ? "관리자" : adminName) + "\n"
-				+ " ▣ 작성일 : " + registerday + "\n----------------------------------------------------\n";
+				+ " ▣ 작성일 : " + registerday + "\n"
+				+ (updateday == null ? "" : " ▣ 최신수정일 : " + updateday + "\n")
+				+ "----------------------------------------------------\n";
 	}
 }

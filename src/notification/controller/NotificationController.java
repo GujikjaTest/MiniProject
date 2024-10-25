@@ -9,6 +9,7 @@ import admin.domain.AdminDTO;
 import notification.domain.NotificationDTO;
 import notification.model.NotificationDAO;
 import notification.model.NotificationDAO_imple;
+import utils.AlignUtil;
 import utils.Msg;
 import utils.ValidationUtil;
 
@@ -72,7 +73,6 @@ public class NotificationController {
 	public void getNotificationList(boolean isAdmin) {
 		// notificationDAO_imple로부터 공지사항 리스트 반환
 		List<NotificationDTO> noticeList = notificationDAO.getNotificationList(isAdmin);
-		String tab = ""; // 출력 간격을 조정하기 위한 tab
 
 		// 공지사항이 존재하지 않는 경우
 		if (noticeList.size() < 1) {
@@ -80,29 +80,26 @@ public class NotificationController {
 			return;
 		}
 
-		System.out.println("\n-< 공지사항 목록 >" + "-".repeat(44));
-		System.out.println("순번\t제목\t\t\t작성자\t작성일");
-		System.out.println("-".repeat(59));
+		System.out.println("\n-< 공지사항 목록 >" + "-".repeat(53));
+		System.out.println("순번\t제목\t\t\t작성자\t작성일\t\t최신수정일"); 
+		System.out.println("-".repeat(68));
 
 		// 공지사항이 존재하는 경우 StringBuilder에 저장
 		for (NotificationDTO notificationDTO : noticeList) {
 
 			// 고정 여부는 제목 앞에 ★ 표시
 			String fixed = notificationDTO.getFix() == 1 ? "[★] " : "";
-			if (notificationDTO.getTitle().length() < 9) {
-				tab = "\t\t";
-			} else {
-				tab = "\t";
-			}
 
 			sb.append(notificationDTO.getNotificationId() + "\t");
-			sb.append(fixed + notificationDTO.getTitle() + tab);
+			sb.append(fixed + notificationDTO.getTitle() + "\t\t\t" );
 			sb.append((notificationDTO.getAdminName() == null ? "관리자" : notificationDTO.getAdminName()) + "\t");
-			sb.append(notificationDTO.getRegisterday() + "\n");
+			sb.append((notificationDTO.getUpdateday() == null ? 
+						(notificationDTO.getRegisterday() + "\t\t" + notificationDTO.getRegisterday() + "\n") : 
+						(notificationDTO.getRegisterday() + "\t\t" + notificationDTO.getUpdateday() + "\n")));
 		}
 
 		// StringBuilder에 저장된 공지사항 리스트 출력
-		System.out.println(sb.toString());
+		System.out.println(AlignUtil.tab(sb).toString());
 	}
 
 	/*

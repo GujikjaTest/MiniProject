@@ -13,6 +13,7 @@ import company.model.CompanyDAO;
 import company.model.CompanyDAO_imple;
 import resume.model.ResumeDAO;
 import resume.model.ResumeDAO_imple;
+import utils.AlignUtil;
 import utils.DisplayScore;
 import utils.Msg;
 
@@ -135,6 +136,7 @@ public class StatisticsController {
 	 * 구직자 경력 통계
 	 */
 	private void getExperienceRatio() {
+		sb.setLength(0);
 		Map<String, Integer> map = resumeDAO.getExperienceRatio(); // 구직자 경력/신입 통계 값을 저장하는 Map
 
 		sb.append("\n-< 구직자 경력 통계 >-------------------\n");
@@ -178,15 +180,15 @@ public class StatisticsController {
 		int n5 = getRatio(map.get("4"), map.get("total")); // 대학교휴학
 				
 		// 게이지바 적용
-		sb.append(" ■ 대졸 비율 " + DisplayScore.getBar(n1) + "%\n");
-		sb.append(" ■ 고졸 비율 " + DisplayScore.getBar(n2) + "%\n");
-		sb.append(" ■ 초대졸 비율 " + DisplayScore.getBar(n3) + "%\n");
-		sb.append(" ■ 대학교재학 비율 " + DisplayScore.getBar(n4) + "%\n");
-		sb.append(" ■ 대학교휴학 비율 " + DisplayScore.getBar(n5) + "%\n");
+		sb.append(" ■ 대졸 비율" + "\t\t" + DisplayScore.getBar(n1) + "%\n");
+		sb.append(" ■ 고졸 비율" + "\t\t" + DisplayScore.getBar(n2) + "%\n");
+		sb.append(" ■ 초대졸 비율" + "\t\t" + DisplayScore.getBar(n3) + "%\n");
+		sb.append(" ■ 대학교재학 비율" + "\t\t" + DisplayScore.getBar(n4) + "%\n");
+		sb.append(" ■ 대학교휴학 비율" + "\t\t" + DisplayScore.getBar(n5) + "%\n");
 
 		sb.append("------------------------------------\n");
 
-		System.out.println(sb.toString());
+		System.out.println(AlignUtil.tab(sb).toString());
 	}
 
 	/*
@@ -250,13 +252,13 @@ public class StatisticsController {
 		int small = getRatio(map.get("small"), map.get("total")); // 중소기업
 		
 		// 게이지바 적용
-		sb.append(" ■ 대기업 비율 " + DisplayScore.getBar(big) + "%\n");
-		sb.append(" ■ 중견기업 비율 " + DisplayScore.getBar(mid) + "%\n");
-		sb.append(" ■ 중소기업 비율 " + DisplayScore.getBar(small) + "%\n");
+		sb.append(" ■ 대기업 비율" + "\t\t" + DisplayScore.getBar(big) + "%\n");
+		sb.append(" ■ 중견기업 비율" + "\t\t" + DisplayScore.getBar(mid) + "%\n");
+		sb.append(" ■ 중소기업 비율" + "\t\t" + DisplayScore.getBar(small) + "%\n");
 		
 		sb.append("----------------------------------------\n");
 		
-		System.out.println(sb.toString());
+		System.out.println(AlignUtil.tab(sb).toString());
 	}
 	
 	/*

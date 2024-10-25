@@ -75,7 +75,7 @@ public class MemberController {
 			case "3": // 관리자 로그인
 				AdminDTO adminDTO = adminCtrl.login(sc);
 				if(adminDTO != null) {
-					//adminCtrl.adminMenu(adminDTO, sc);
+					adminCtrl.adminMenu(adminDTO, sc);
 				}
 				break;
 			
