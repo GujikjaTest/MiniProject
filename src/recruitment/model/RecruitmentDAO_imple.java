@@ -35,7 +35,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 	
 	// *** 글목록보기를 해주는 메소드 *** //
 	@Override
-	public List<RecruitmentDTO> recruitmenList() {
+	public List<RecruitmentDTO> recruitmenList(String companyId) {
 		
 		List<RecruitmentDTO> recruitmentList = new ArrayList<>();
 		
@@ -51,9 +51,10 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 					   + " ) A join TBL_COMPANY B "
 					   + " on A.fk_company_id = B.company_id "
 					   + " join TBL_JOB J "
-					   + " on J.job_id = A.fk_job_id where is_delete = 0 and sysdate < deadlineday order by 1 ";
+					   + " on J.job_id = A.fk_job_id where is_delete = 0 and sysdate < deadlineday and company_id = ? order by 1 ";
 			
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, companyId);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -107,7 +108,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 					   + " on A.fk_company_id = B.company_id "
 					   + " join TBL_JOB J "
 					   + " on J.job_id = A.fk_job_id "
-					   + " where recruitment_id = ? ";
+					   + " where recruitment_id = ? and is_delete = 0 and deadlineday > sysdate ";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, recruitmentId);
@@ -126,6 +127,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 				recruitmentDTO.setRegisterday(rs.getString("registerday"));		// 등록일자
 				recruitmentDTO.setDeadlineday(rs.getString("deadlineday"));		// 마감일자
 				recruitmentDTO.setUpdateday(rs.getString("updateday"));
+				recruitmentDTO.setFkJobId(rs.getInt("job_id"));
 				
 				CompanyDTO companyDTO = new CompanyDTO();
 				companyDTO.setName(rs.getString("comName")); 	// 회사명
@@ -234,17 +236,17 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 	
 	// *** 채용공고 삭제를 해주는 메소드 *** //
 	@Override
-	public int recruitmentDelete(RecruitmentDTO recruitmentDTO) {
+	public int recruitmentDelete(RecruitmentDTO recruitmentDTO, CompanyDTO companyDTO) {
 		
 		int result = 0;
 		
 		try {
 			
-			String sql = " update TBL_RECRUITMENT set is_delete = 1 where recruitment_id = ? ";
+			String sql = " update TBL_RECRUITMENT set is_delete = 1 where recruitment_id = ? and fk_company_id = ? ";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, recruitmentDTO.getRecruitmentId());
-			
+			pstmt.setString(2, companyDTO.getCompanyId());
 			
 			result = pstmt.executeUpdate(); // sql문 실행
 
@@ -267,7 +269,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 		List<RecruitmentDTO> recruitmentList = new ArrayList<>();
 		
 		try {
-			String sql = " select rank, comName, jobName, title, emp_type, experience, deadlineday, is_delete "
+			String sql = " select rank, comName, jobName, case when length(title) > 12 then substr(title, 1, 10) || '..' else title end AS title, emp_type, experience, to_char(deadlineday, 'yyyy-mm-dd') AS deadlineday, is_delete "
 					   + " from  "
 					   + " ( "
 					   + " select dense_rank()over(order by(cnt) asc) AS rank, comName, jobName, title, emp_type, experience, deadlineday, is_delete, cnt "
@@ -339,7 +341,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 		
 		try {
 			
-			String sql = " select recruitment_id, C.name AS comName, J.name AS jobName, title, emp_type, experience, to_char(deadlineday, 'yyyy-mm-dd') AS deadlineday, job_id "
+			String sql = " select recruitment_id, C.name AS comName, J.name AS jobName, case when length(title) > 12 then substr(title, 1, 10) || '..' else title end AS title, emp_type, experience, to_char(deadlineday, 'yyyy-mm-dd') AS deadlineday, job_id "
 					   + " from TBL_RECRUITMENT R join TBL_JOB J "
 					   + " on R.fk_job_id = J.job_id "
 					   + " join TBL_COMPANY C "

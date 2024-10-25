@@ -16,6 +16,7 @@ import job.model.JobDAO_imple;
 import recruitment.domain.RecruitmentDTO;
 import recruitment.model.RecruitmentDAO;
 import recruitment.model.RecruitmentDAO_imple;
+import utils.AlignUtil;
 import utils.Msg;
 
 public class RecruitmentApplicantController {
@@ -45,20 +46,20 @@ public class RecruitmentApplicantController {
 			}
 			else {
 				sb.setLength(0);
-				sb.append("-< 지원자수 상위 10개 채용공고 >"+"-".repeat(56)+"\n");
-				sb.append("순위  회사명    직종          제목                       경력    채용형태    마감일\n");
-				sb.append("-".repeat(80)+"\n");
+				sb.append("-< 지원자수 상위 10개 채용공고 >"+"-".repeat(50)+"\n");
+				sb.append("순위\t회사명\t직종\t\t제목\t\t경력\t채용형태\t마감일\n");
+				sb.append("-".repeat(74)+"\n");
 				
 				for(int i=0; i<RecruitmentList.size();i++) {
-					sb.append(align(RecruitmentList.get(i).getRank(), 4)+"  "+
-							  align(RecruitmentList.get(i).getComdto().getName(), 5)+"  "+
-							  align(RecruitmentList.get(i).getJobdto().getName(), 10)+"  "+
+					sb.append(RecruitmentList.get(i).getRank()+"\t"+
+							  RecruitmentList.get(i).getComdto().getName()+"\t"+
+							  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
 							  RecruitmentList.get(i).getTitle()+"\t\t"+
-							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"  "+
-							  Transaction.empType(RecruitmentList.get(i).getEmpType())+"  "+
+							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
+							  Transaction.empType(RecruitmentList.get(i).getEmpType())+"\t"+
 							  RecruitmentList.get(i).getDeadlineday()+"\n" );
 				} // end of for------------
-				System.out.println(sb.toString());
+				System.out.println(AlignUtil.tab(sb).toString());
 			}
 			System.out.println("=".repeat(17)+"< 카테고리 메뉴 >"+"=".repeat(17));
 			System.out.println("1.회사명   2.직종별   3.지역별   4.경력   0.돌아가기");
@@ -138,7 +139,7 @@ public class RecruitmentApplicantController {
 		}
 		else {
 			if(map.get("status").equals("1")) { // 회사명
-				sb.append("-< "+map.get("search")+" 회사명 검색결과 >"+"-".repeat(56)+"\n");
+				sb.append("-< "+map.get("search")+" 회사명 검색결과 >"+"-".repeat(50)+"\n");
 			}
 			else if(map.get("status").equals("2")) { // 직종별
 				sb.append("-< "+ RecruitmentList.get(0).getJobdto().getName()+" 직종 검색결과 >"+"-".repeat(56)+"\n");
@@ -149,20 +150,20 @@ public class RecruitmentApplicantController {
 			else { // 경력
 				sb.append("-< "+Transaction.experience(Integer.parseInt(map.get("search")))+" 경력 검색결과 >"+"-".repeat(56)+"\n");
 			}
-			sb.append("채용공고순번  회사명    직종          제목                       경력    채용형태    마감일\n"+
-					  "-".repeat(86)+"\n");
+			sb.append("채용공고순번\t 회사명\t직종\t\t제목\t\t경력\t채용형태\t마감일\n"+
+					  "-".repeat(74)+"\n");
 			
 			for(int i=0; i<RecruitmentList.size(); i++) {
-				sb.append(align(RecruitmentList.get(i).getRecruitmentId(), 8)+"  "+
-						  align(RecruitmentList.get(i).getComdto().getName(), 5)+"  "+
-						  align(RecruitmentList.get(i).getJobdto().getName(), 10)+"  "+
+				sb.append(RecruitmentList.get(i).getRecruitmentId()+"\t"+" "+
+						  RecruitmentList.get(i).getComdto().getName()+"\t"+
+						  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
 						  RecruitmentList.get(i).getTitle()+"\t\t"+
-						  Transaction.experience(RecruitmentList.get(i).getExperience()) +"  "+
-						  Transaction.empType(RecruitmentList.get(i).getEmpType())+"  "+
+						  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
+						  Transaction.empType(RecruitmentList.get(i).getEmpType())+"\t"+
 						  RecruitmentList.get(i).getDeadlineday()+"\n");
 			} // end of for()--------------------------
-			sb.append("-".repeat(86)+"\n");
-			System.out.println(sb.toString());
+			sb.append("-".repeat(74));
+			System.out.println(AlignUtil.tab(sb).toString());
 		}
 		
 		do {

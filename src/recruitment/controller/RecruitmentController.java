@@ -11,7 +11,10 @@ import company.domain.CompanyDTO;
 import job.controller.JobController;
 import recruitment.domain.RecruitmentDTO;
 import recruitment.model.*;
+import utils.AlignUtil;
 import utils.Msg;
+import apply.controller.Applycontroller;
+import apply.domain.ApplyDTO;
 import apply.model.*;
 import job.model.*;
 
@@ -23,6 +26,7 @@ public class RecruitmentController {
 	JobDAO jdao = new JobDAO_imple();
 	List<RecruitmentDTO> RecruitmentList;
 	JobController jCtrl = new JobController();
+	Applycontroller applyCtrl = new Applycontroller();
 	
 	// method
 	
@@ -35,38 +39,38 @@ public class RecruitmentController {
 		
 		do {
 			////////////////////////////////////////////////////////////////////	
-			RecruitmentList = rdao.recruitmenList();
+			RecruitmentList = rdao.recruitmenList(companyDTO.getCompanyId());
 			
 			if(RecruitmentList.size()==0) {
 				System.out.println(">> 조회된 결과가 없습니다. <<\n");
 			}
 			else {
 				sb.setLength(0);
-				sb.append("-< "+companyDTO.getName()+" 기업의 채용공고 목록 >"+"-".repeat(56)+"\n");
-				sb.append("채용공고순번  회사명    직종          제목                       경력    채용형태    마감일\n");
-				sb.append("-".repeat(80)+"\n");
+				sb.append(AlignUtil.title("-"+companyDTO.getName()+" 기업의 채용공고 목록", 76));
+				sb.append("채용공고순번\t회사명\t직종\t\t제목\t\t경력\t채용형태\t마감일\n");
+				sb.append("-".repeat(75)+"\n");
 				
 				for(int i=0; i<RecruitmentList.size();i++) {
-					sb.append(align(RecruitmentList.get(i).getRecruitmentId(), 8)+"  "+
-							  align(RecruitmentList.get(i).getComdto().getName(), 5)+"  "+
-							  align(RecruitmentList.get(i).getJobdto().getName(), 10)+"  "+
+					sb.append(RecruitmentList.get(i).getRecruitmentId()+"\t"+
+							  RecruitmentList.get(i).getComdto().getName()+"\t"+
+							  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
 							  RecruitmentList.get(i).getTitle()+"\t\t"+
-							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"  "+
-							  Transaction.empType(RecruitmentList.get(i).getEmpType())+"  "+
+							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
+							  Transaction.empType(RecruitmentList.get(i).getEmpType())+"\t"+
 							  RecruitmentList.get(i).getDeadlineday()+"\n" );
 				} // end of for------------
-				System.out.println(sb.toString());
+				System.out.println(AlignUtil.tab(sb).toString());
 			}
-			System.out.println("=".repeat(20)+"< 메뉴 >"+"=".repeat(20));
+			System.out.println("=".repeat(16)+"< 메뉴 >"+"=".repeat(16));
 			System.out.println("1.채용공고 상세보기   2.채용공고 등록   0.돌아가기");
-			System.out.println("=".repeat(47));
+			System.out.println("=".repeat(39));
 			
 			System.out.print("▷ 메뉴 선택 : ");
 			String menu = sc.nextLine();
 			
 			switch (menu) {
 			case "1": // 채용공고 상세보기
-				recruitmentInfo(sc);
+				recruitmentInfo(companyDTO, sc);
 				
 				break;
 				
@@ -89,49 +93,49 @@ public class RecruitmentController {
 
 
 
-	// 채용공고 상세보기
-	private void recruitmentInfo(Scanner sc) {
+	// *** 채용공고 상세보기를 보여주는 메소드 *** //
+	private void recruitmentInfo(CompanyDTO companyDTO, Scanner sc) {
 		
-		StringBuilder sb = new StringBuilder();
-
 		RecruitmentDTO recruitmentDTO = recruitmentInfoShow(sc); // 채용공고 상세보기를 출력해주는 메소드
 		// 값이 없다면 리턴값이 null이 나온다
 		if(recruitmentDTO==null) { // 채용공고가 존재하지 않거나 문자로 입력한 경우
 			return;
 		}
 		else { // 만약 채용공고가 있을 경우
-			sb.append("-< 입사지원자 목록 >"+"-".repeat(42)+"\n"
-					+ "지원서순번  이름    지원동기                         입사지원일\n"
-					+ "-".repeat(62));// 입자지원자 목록 타이틀
 			
-		//	List<ApplyDTO> ApplyList = adao.applyList(); // 입자지원자 목록 타이틀---------------------------------------------------상우
+			List<ApplyDTO> ApplyList = applyCtrl.applyShowList(recruitmentDTO); // 해당하는 공고의 지원자들을 조회하는 메소드
 			
 			do {
 				////////////////////////////////////////////////////////////////////
-				System.out.println("=".repeat(30)+"< 메뉴 >"+"=".repeat(30));
+				System.out.println("=".repeat(24)+"< 메뉴 >"+"=".repeat(24));
 				System.out.println("1.지원자 이력서 조회   2.채용공고 수정   3.채용공고 삭제   0.돌아가기");
-				System.out.println("=".repeat(68));
+				System.out.println("=".repeat(55));
 				
 				System.out.print("▷ 메뉴 선택 : ");
 				String menu = sc.nextLine();
 				
 				switch (menu) {
 				case "1": // 지원자 이력서 조회
-					//----------------------------------------------상우
-					break;
-					
+					if(ApplyList.size()==0) {
+						Msg.N("입자지원자가 존재하지 않습니다.");
+						continue;
+					}
+					else {
+						applyCtrl.applySelect(recruitmentDTO, sc); // 지원자 이력서 및 정보를 조회하는 메소드
+						break;
+					}
 				case "2": // 채용공고 수정
 					recruitmentUpdate(recruitmentDTO, sc);
 					break;
 					
 				case "3": // 채용공고 삭제
-					int deleteResult = recruitmentDelete(recruitmentDTO, sc);
+					int deleteResult = recruitmentDelete(recruitmentDTO, companyDTO, sc);
 					
 					if(deleteResult == 0) {
-						System.out.println(">> 채용공고 삭제가 취소되었습니다. <<");
+						System.out.println(">> 채용공고 삭제가 취소되었습니다. <<\n");
 					}
 					else {
-						System.out.println(">> 채용공고 삭제가 완료되었습니다. <<");
+						System.out.println(">> 채용공고 삭제가 완료되었습니다. <<\n");
 						return;
 					}
 					break;
@@ -153,7 +157,7 @@ public class RecruitmentController {
 
 
 
-	// 채용공고 상세보기를 출력해주는 메소드
+	// *** 채용공고 상세보기를 출력해주는 메소드 *** //
 	RecruitmentDTO recruitmentInfoShow(Scanner sc) {
 		
 		System.out.print("▷ 채용공고순번 입력 : ");
@@ -434,7 +438,6 @@ public class RecruitmentController {
 		// do~while()-----------------------
 		// 채용내용
 		
-		
 		int fk_job_id = jCtrl.jobUpdateList(recruitmentDTO.getFkJobId(), sc); // 직종목록을 뽑아주는 메소드
 		// 직종 번호 입력
 		
@@ -612,7 +615,7 @@ public class RecruitmentController {
 
 
 	// 채용공고 삭제
-	private int recruitmentDelete(RecruitmentDTO recruitmentDTO, Scanner sc) {
+	private int recruitmentDelete(RecruitmentDTO recruitmentDTO, CompanyDTO companyDTO, Scanner sc) {
 		
 		int result = 0;
 		do {
@@ -620,7 +623,7 @@ public class RecruitmentController {
 			String yn = sc.nextLine();
 			
 			if("y".equalsIgnoreCase(yn)) {
-				result = rdao.recruitmentDelete(recruitmentDTO);
+				result = rdao.recruitmentDelete(recruitmentDTO, companyDTO);
 				RecruitmentList.add(recruitmentDTO);
 				break;
 			}
@@ -637,14 +640,5 @@ public class RecruitmentController {
 		
 	} // end of private void recruitmentDelete(RecruitmentDTO recruitmentDTO, Scanner sc)---------
 	
-	// === 제목 정렬을 위한 메소드 === //
-	private String align(String str, int n) {
-	   return str +" ".repeat(n-str.length());
-	}
-	
-	private String align(int no, int n) {
-		String num = String.valueOf(no);
-	    return no +" ".repeat(n-num.length());
-	}
 	
 }

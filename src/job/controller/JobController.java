@@ -7,7 +7,7 @@ import java.util.Scanner;
 import job.domain.JobDTO;
 import job.model.JobDAO;
 import job.model.JobDAO_imple;
-import recruitment.domain.RecruitmentDTO;
+import utils.AlignUtil;
 
 public class JobController {
 	
@@ -101,29 +101,18 @@ public class JobController {
 		
 		jobDTO = jdao.jobList(); // 희망직종 목록을 보여주는 메소드
 		
-		sb.append("=".repeat(20)+"< 희망직종 목록 >"+"=".repeat(20));
+		sb.append("=".repeat(17)+"< 희망직종 목록 >"+"=".repeat(17));
 		for(int i=0; i<21; i++) {
 			if(i%3==0) {
 				sb.append("\n");
 			}
-		sb.append(align(jobDTO.get(i).getJob_id(), 3)+align(jobDTO.get(i).getName(), 15)); 
+		sb.append(jobDTO.get(i).getJob_id()+" "+jobDTO.get(i).getName()+"\t\t"+" "); 
 		}// end of for()-------------------
-		sb.append("\n"+"=".repeat(53));
+		sb.append("\n"+"=".repeat(47));
 		
-		System.out.printf(sb.toString()+"\n");
+		System.out.printf(AlignUtil.tab(sb).toString()+"\n");
 		
 	} // end of private void jobListArray()---------------
 	
-	
-	
-	// === 제목 정렬을 위한 메소드 === //
-	private String align(String str, int n) {
-	   return str +" ".repeat(n-str.length());
-	}
-	
-	private String align(int no, int n) {
-		String num = String.valueOf(no);
-	    return no +" ".repeat(n-num.length());
-	}
 
 }

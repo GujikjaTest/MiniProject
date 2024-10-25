@@ -170,7 +170,7 @@ public class RecruitmentDTO {
 			   "9.연봉 : " + Transaction.salary(salary)+"\n"+
 			   "10.최종수정일자 : " + getUpdateday()+"\n"+
 			   "11.채용마감일자 : " + deadlineday+"\n"+
-			   "-".repeat(50);
+			   "-".repeat(46);
     }
 	
 }
