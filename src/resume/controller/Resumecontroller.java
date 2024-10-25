@@ -1,9 +1,6 @@
 package resume.controller;
 
-import java.awt.Menu;
-import java.util.HashMap;
 import java.util.InputMismatchException;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,14 +23,6 @@ public class Resumecontroller {
 	JobDTO jobDTO = null;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
 	/*
 	 =====< 메뉴 >======================
 	 1.이력서 작성  2.이력서 수정  0.나가기
@@ -42,10 +31,11 @@ public class Resumecontroller {
 		StringBuilder sb = new StringBuilder();
 		String menumno = "";
 		do {
+			int n = 0; // 1이면 입사지원 탭 n 아니면 다른 것 ex_ 1이면 == 입사지원 ==  그 외 == 이력서 관리 ==
 			
 			boolean completed = resumeDAO.resume_Completed(applicant);
 			if(completed == true) {
-				resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant);
+				resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant,n);
 			}
 			
  		
@@ -85,18 +75,6 @@ public class Resumecontroller {
 		}while(!"0".equals(menumno)); //end of do while ----
 	}
 
-	
-
-
-
-
-
-
-
-
-
-
-
 
 
 	// int 형 변수를 유효성 검사하기 위해 str 임시 변수 추가 writeResume()과 modifyResume()에 필요.
@@ -109,21 +87,15 @@ public class Resumecontroller {
 	boolean is_Exit = false;
 
 
-	
 	// 이력서 작성
-	private void writeResume(ApplicantDTO applicant) {
+	public void writeResume(ApplicantDTO applicant) {
 		try {
 			// ** 이력서가 이미 작성 돼있는지, 안돼있는지 ** //
-						boolean completed = resumeDAO.resume_Completed(applicant);
-						if(completed == true) {
-							System.out.println(">> [경고] 이미 작성된 이력서가 있습니다. <<\n");
-							return;
-						}
-			
-			StringBuilder sb = new StringBuilder();
-			
-			
-			
+			boolean completed = resumeDAO.resume_Completed(applicant);
+			if(completed == true) {
+				System.out.println(">> [경고] 이미 작성된 이력서가 있습니다. <<\n");
+				return;
+			}
 			
 			int experience = 0;
 			int education = 0;
@@ -181,11 +153,7 @@ public class Resumecontroller {
 				}catch(NumberFormatException e) {
 					System.out.println(">> [경고] 숫자로만 입력하셔야합니다! <<\n");
 				}
-			}while(!is_Exit); // end of do while()--------------
-				
-				
-				
-				
+			}while(!is_Exit); // end of do while()--------------	
 				
 			is_Exit = false;
 			
@@ -211,9 +179,6 @@ public class Resumecontroller {
 			}while(!is_Exit); // end of do while()--------------
 			
 			
-			
-			
-			
 			is_Exit = false;
 			
 			
@@ -231,8 +196,6 @@ public class Resumecontroller {
 				}
 				
 			}while(!is_Exit); // end of do while()--------------
-			
-			
 			
 			
 			is_Exit = false;
@@ -275,10 +238,7 @@ public class Resumecontroller {
 					System.out.println(">> [경고] 숫자로만 입력하셔야합니다! <<\n");
 				}
 	        }while(!is_Exit); // end of do while()--------------
-				
-				
-				
-				
+					
 		   
 		   is_Exit = false;
 				
@@ -344,13 +304,6 @@ public class Resumecontroller {
 	}// end of private void writeResume()------------
 	
 	
-	
-	
-	
-	
-	
-	
-	
 	// 이력서 수정
 	private void modifyResume(ApplicantDTO applicant) {
 		
@@ -362,38 +315,11 @@ public class Resumecontroller {
 		
 		// 새로운 ResumeDTO()객체 생성 (ResumeDTO에 기존에 존재하는 이력서의 값을 set해주기 위함)
 		ResumeDTO resumeDTO = new ResumeDTO();
-				
-		///////////////////////////////////////////////////////////////////
-		//작성된 이력서가 없으면 이력서 수정메소드 종료
 		
-		resumeDTO = resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant); //set 해라
+		int n = 0; // 1이면 입사지원 탭 n 아니면 다른 것 ex_ 1이면 == 입사지원 ==  그 외 == 이력서 관리 ==
+		resumeDTO = resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant,n); 
 		
 		
-		
-		// ** 테스트용 ** //
-		/*
-		System.out.println(resumeDTO.getExperience());
-		System.out.println(resumeDTO.getEducation());
-		System.out.println(resumeDTO.getHope_location());
-		System.out.println(resumeDTO.getJobDTO().getJob_id() + resumeDTO.getJobDTO().getName());
-		System.out.println(resumeDTO.getJob_description());
-		System.out.println(resumeDTO.getHope_salary());
-		
-		1
-		1
-		경기도
-		1기획·전략
-		제이쿼리
-		4000
-		*/
-		
-		
-		//if(null_notnull_resumeDTO == null) {
-		//	System.out.println("[경고] 현재 작성된 이력서가 없습니다. \n");
-			
-		//	return;
-		//} 
-		/////////////////////////////////////////////////////////////////////
 		
 		int experience = 0;
 		int education = 0;
@@ -426,9 +352,7 @@ public class Resumecontroller {
 				is_Exit = true;
 			}
 		}while(!is_Exit); // end of do while()--------------
-   
-   
-		
+	
 		
 		is_Exit = false;
 		
@@ -459,13 +383,7 @@ public class Resumecontroller {
 		}while(!is_Exit); // end of do while()--------------
 		
 		
-		
-		
-		
-		
-		
 		is_Exit = false;
-		
 		
 		//희망직종
 		do {
@@ -506,12 +424,7 @@ public class Resumecontroller {
 			}
         }while(!is_Exit); // end of do while()--------------
 		
-		
-		
-		
-   
 		is_Exit = false;
-		
 		
 		//스펙(직무기술)
 		do {
@@ -531,11 +444,7 @@ public class Resumecontroller {
 			
 		}while(!is_Exit); // end of do while()--------------
 		
-		
-		
-		
 		is_Exit = false;
-		
 		
 		//희망근무지역
 		do {
@@ -619,19 +528,11 @@ public class Resumecontroller {
 		
 	}// end of private void modifyResume(ApplicantDTO applicant) ------------
 	
-	
-	//////////////////////////////////////////
-	
-
-	
-	
-	
    /*
     * 문자열이 한글인지 검사
     * 문자열에 한글이 아닌 문자가 포함되는 것을 허용
     */
    public boolean isKoreanValid(String str) {
-      boolean valid = true;
       String regex = "[가-힣]";
       Pattern pattern = Pattern.compile(regex);
       Matcher matcher = pattern.matcher(str);
@@ -644,51 +545,36 @@ public class Resumecontroller {
       return true;
    }
    
-   
-   
-   
    // *** 이력서 보여주기 *** //
-	public ResumeDTO resumeInfo(StringBuilder sb,JobDTO jobDTO,ResumeDTO resumeDTO,ResumeDAO resumeDAO,ApplicantDTO applicant){
+	public ResumeDTO resumeInfo(StringBuilder sb,JobDTO jobDTO,ResumeDTO resumeDTO,ResumeDAO resumeDAO,ApplicantDTO applicant,int n){
 		sb = new StringBuilder();
-		sb.append("=== 이력서 관리 ===\n");
+		if(n==1) {
+			sb.append("\n=== 입사지원 ===\n");
+		}else {
+			sb.append("=== 이력서 관리 ===\n");
+		}
 		sb.append("-< "+ applicant.getName() +"님의 이력서 >-------------------------------------------\n");
 		sb.append("경력     학력    희망근무지역      희망직종       직무기술   희망연봉\n");
 		sb.append("-------------------------------------------------------------");
 
 		System.out.println(sb.toString());
 		/*
-		 신입 	남서울대학교	서울	백엔드	Spring	3,000만원
+		 ex 신입 	남서울대학교	서울	백엔드	Spring	3,000만원
 		*/
  		
  		resumeDTO = resumeDAO.list_Resume(applicant); // 이력서 관리(이력서를 보여줌)
  		
- 		/*
- 		  --
- 		 이력서를 아직 작성하지 않은 경우도 생성할 것
- 		  --
- 		 */
  		
  		sb = new StringBuilder(); //StringBuilder 초기화
-		
- 		
- 		
  		
  		
  		sb.append(Transaction.experience((resumeDTO.getExperience())) +"   "+Transaction.education(resumeDTO.getEducation())   + "   " +
  				resumeDTO.getHope_location() + "        " + resumeDTO.getJobDTO().getName() + "       " + //getName -> 희망직종
- 				resumeDTO.getJob_description() + "      " + resumeDTO.getHope_salary()+"\n");
+ 				resumeDTO.getJob_description() + "      " + resumeDTO.getHope_salary());
  		
- 		System.out.println(sb.toString()); //데이터베이스 연동테스트 시 주석 삭제
+ 		System.out.println(sb.toString()); 
  		
  		return resumeDTO;
 	}
-	   
-	   
-	   
-	   
-	
-	
-	
-
 	
 }//end of public class Resumecontroller-------------

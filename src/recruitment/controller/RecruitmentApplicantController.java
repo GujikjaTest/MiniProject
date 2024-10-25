@@ -11,12 +11,17 @@ import apply.model.ApplyDAO;
 import apply.model.ApplyDAO_imple;
 import common.Transaction;
 import job.controller.JobController;
+import job.domain.JobDTO;
 import job.model.JobDAO;
 import job.model.JobDAO_imple;
 import recruitment.domain.RecruitmentDTO;
 import recruitment.model.RecruitmentDAO;
 import recruitment.model.RecruitmentDAO_imple;
 import utils.AlignUtil;
+import resume.controller.Resumecontroller;
+import resume.domain.ResumeDTO;
+import resume.model.ResumeDAO;
+import resume.model.ResumeDAO_imple;
 import utils.Msg;
 
 public class RecruitmentApplicantController {
@@ -117,7 +122,7 @@ public class RecruitmentApplicantController {
 				map.put("search", search);
 				map.put("status", status);
 				
-				showAllRecruitment(map, sc); // 각 항목별로 입력받은 search 값을 넘겨서 한 메소드로 처리할 것이다!
+				showAllRecruitment(map, sc,applicant); // 각 항목별로 입력받은 search 값을 넘겨서 한 메소드로 처리할 것이다!
 			}
 			////////////////////////////////////////////////////////////////////
 		}while(true);
@@ -127,7 +132,7 @@ public class RecruitmentApplicantController {
 
 
 	// 회사명, 직종별, 지역별, 경력 검색
-	private void showAllRecruitment(Map<String, String> map, Scanner sc) {
+	private void showAllRecruitment(Map<String, String> map, Scanner sc,ApplicantDTO applicant) {
 		
 		RecruitmentList = new ArrayList<>();
 		RecruitmentList = rdao.showAllRecruitment(map);
@@ -177,7 +182,7 @@ public class RecruitmentApplicantController {
 			
 			switch (menu) {
 			case "1": // 채용공고 상세보기
-				recruitmentInfo(sc); // 채용공고 상세보기
+				recruitmentInfo(sc,applicant); // 채용공고 상세보기
 				break;
 	
 			case "0": // 돌아가기
@@ -195,7 +200,7 @@ public class RecruitmentApplicantController {
 
 	
 	// 채용공고 상세보기
-	private void recruitmentInfo(Scanner sc) {
+	private void recruitmentInfo(Scanner sc,ApplicantDTO applicant) {
 
 		StringBuilder sb = new StringBuilder();
 		
@@ -215,28 +220,73 @@ public class RecruitmentApplicantController {
 			System.out.println(sb.toString());
 			
 			do {
-			////////////////////////////////////////////////////////////////////
-			System.out.println("=".repeat(6)+"< 메뉴 >"+"=".repeat(6));
-			System.out.println("1.입사지원   0.돌아가기");
-			System.out.println("=".repeat(18));
-			
-			System.out.print("▷ 검색메뉴번호 입력 : ");
-			String menu = sc.nextLine();
-			
-			switch (menu) {
-			case "1": // 입사지원
-				// ----------------------------------상우
-				break;
+				////////////////////////////////////////////////////////////////////
+				System.out.println("=".repeat(6)+"< 메뉴 >"+"=".repeat(6));
+				System.out.println("1.입사지원   0.돌아가기");
+				System.out.println("=".repeat(18));
 				
-			case "0": // 돌아가기
+				System.out.print("▷ 검색메뉴번호 입력 : ");
+				String menu = sc.nextLine();
 				
-				return;
-
-			default:
-				System.out.println(">> [경고] 입력하신 메뉴 번호 "+menu+"는 존재하지 않습니다. <<\n");
-				break;
-			}
-			////////////////////////////////////////////////////////////////////
+				switch (menu) {
+				case "1": // 입사지원
+					// ----------------------------------상우
+					Resumecontroller resumecontroller = new Resumecontroller();
+					ResumeDAO resumeDAO = new ResumeDAO_imple();
+					ResumeDTO resumeDTO = null;
+					JobDTO jobDTO = null;
+					
+					/////////////////////////////////
+					// *** 입사지원 중복체크 메서드 *** //
+					
+					boolean result = false;
+					result = resumeDAO.apply_Duplication_Check(recruitmentId,result,applicant);
+					
+					if(result == true) {
+						System.out.println("\n>> [경고] 중복된 입사지원입니다. <<");
+						return; // 중복된 지원일 경우 메소드 종료
+					}
+					//////////////////////////////////
+					
+					int n = 1; // 1이면 입사지원 탭 n 아니면 다른 것 ex_ 1이면 == 입사지원 ==  그 외 == 이력서 관리 ==
+					
+					boolean completed = resumeDAO.resume_Completed(applicant);
+					if(completed == false) {
+						System.out.println("\n>> 이력서를 먼저 등록해주세요! <<\n");
+						/*
+						 *  이력서가 없을 경우 => 1.입사지원 -> 이력서 등록 -> 이력서 등록 -> 지원동기 작성
+						 * 
+						 *
+						/*
+						여기서도 사용해주기 위해 Resumecontroller 클래스의 
+						private void writeResume(ApplicantDTO applicant) 을
+						public void writeResume(ApplicantDTO applicant)으로 변경
+						*/
+						Resumecontroller Resumecontroller = new Resumecontroller();
+						Resumecontroller.writeResume(applicant);
+						
+						//return; 리턴 삭제, 이력서가 있을 시 completed가 true 이므로  if문을 실행하지 않음
+						// 이력서가 없을 시 if문을 실행하여 이력서 작성 후 밑의 지원동기입력(입사지원서 테이블 insert)실행
+					}
+					
+					resumecontroller.resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant,n); // 이력서 출력
+					
+					
+					// *** 채용응모의 지원동기 입력 메소드 *** //
+					apply_Applicant(sc,resumeDAO,applicant,recruitmentId); 
+					
+					
+					return;
+					
+				case "0": // 돌아가기
+					
+					return;
+	
+				default:
+					System.out.println(">> [경고] 입력하신 메뉴 번호 "+menu+"는 존재하지 않습니다. <<\n");
+					break;
+				}
+				////////////////////////////////////////////////////////////////////
 			}while(true);
 			
 		}
@@ -245,10 +295,26 @@ public class RecruitmentApplicantController {
 
 
 
+	
+
+
+
 	// === 제목 정렬을 위한 메소드 === //
 	private String align(String str, int n) {
 	   return str +" ".repeat(n-str.length());
 	}
+	
+	// *** 지원동기 입력을 위한 메소드 *** //
+	private void apply_Applicant(Scanner sc,ResumeDAO resumeDAO,ApplicantDTO applicant,String recruitmentId) {
+		
+		ApplyDAO applyDAO = new ApplyDAO_imple();
+		
+		System.out.println("-".repeat(62));
+		System.out.print("▷ 지원동기 : ");
+		String apply_Applicant = sc.nextLine();
+		applyDAO.apply_Applicant(apply_Applicant,applicant,recruitmentId); // 입사지원서 삽입 메서드
+		
+	} // end of private void apply_Applicant(Scanner sc) -----
 	
 	private String align(int no, int n) {
 		String num = String.valueOf(no);

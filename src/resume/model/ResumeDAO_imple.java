@@ -291,7 +291,7 @@ public class ResumeDAO_imple implements ResumeDAO{
 			pstmt = conn.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery(); // sql문 실행
-	
+			
 			while(rs.next()) {
 				String[] arr = new String[3]; // String[0] = [순위], String[1] = [직종명], String[2] = [비율]
 				
@@ -311,4 +311,46 @@ public class ResumeDAO_imple implements ResumeDAO{
 		return list;
 	}
 
+
+	// *** 입사지원 중복체크 메서드 *** //
+	@Override
+	public boolean apply_Duplication_Check(String recruitmentId,boolean result,ApplicantDTO applicant) {
+		
+		
+		try {
+			
+			sql = " select resume_id from tbl_applicant A "
+					+ " join tbl_resume R "
+					+ " on A.applicant_id = R.fk_applicant_id "
+					+ " where A.applicant_id = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,applicant.getApplicantId());
+			rs = pstmt.executeQuery();
+			rs.next();
+			int resume_id = rs.getInt("resume_id");
+			
+			
+			sql = " select * from tbl_apply "
+				+ " where fk_recruitment_id = ? and fk_resume_id = ? "; 
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1,recruitmentId);
+			pstmt.setInt(2,resume_id);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				result = true;
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			close();
+		}
+		return result;
+		
+	}
 }
