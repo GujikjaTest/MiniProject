@@ -291,7 +291,7 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 					   + "         where is_delete = 0 and sysdate < deadlineday "
 					   + "     ) V "
 					   + " ) V1 "
-					   + " where rank between 1 and 10 and is_delete = 0 ";
+					   + " where is_delete = 0 and rownum <= 10 ";
 			
 			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -350,19 +350,19 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 			switch (map.get("status")) {
 			case "":
 			case "1": // 회사명 검색
-				sql += " where C.name like '%'||?||'%' and sysdate < deadlineday and rownum < 10 and is_delete = 0 order by 1 ";
+				sql += " where C.name like '%'||?||'%' and sysdate < deadlineday and is_delete = 0 order by 1 ";
 				break;
 				
 			case "2": // 직종별 검색
-				sql += " where job_id like ? and sysdate < deadlineday and rownum < 10 and is_delete = 0 order by 1 ";
+				sql += " where job_id like ? and sysdate < deadlineday and is_delete = 0 order by 1 ";
 				break;
 				
 			case "3": // 지역별 검색
-				sql += " where address like '%'||?||'%' and sysdate < deadlineday and rownum < 10 and is_delete = 0 order by 1 ";
+				sql += " where address like '%'||?||'%' and sysdate < deadlineday and is_delete = 0 order by 1 ";
 				break;
 				
 			case "4": // 경력 검색
-				sql += " where experience like '%'||?||'%' and sysdate < deadlineday and rownum < 10 and is_delete = 0 order by 1 ";
+				sql += " where experience like '%'||?||'%' and sysdate < deadlineday and is_delete = 0 order by 1 ";
 				break;
 			}
 			
