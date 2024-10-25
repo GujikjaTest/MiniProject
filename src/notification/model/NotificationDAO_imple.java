@@ -48,7 +48,8 @@ public class NotificationDAO_imple implements NotificationDAO {
 	public List<NotificationDTO> getNotificationList(boolean isAdmin) {
 		List<NotificationDTO> noticeList = new ArrayList<>();
 
-		String sql = " select notification_id, name, title, to_char(registerday, 'yyyy-mm-dd') as registerday, fix "
+		String sql = " select notification_id, name, to_char(registerday, 'yyyy-mm-dd') as registerday, fix,"
+				+ " case when length(title) > 12 then substr(title, 1, 12) || '..' else title end as title "
 				+ " from tbl_notification N join tbl_admin A on N.fk_admin_id = A.admin_id " + " where is_delete = 0 "
 				+ " order by fix desc, registerday desc";
 

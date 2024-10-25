@@ -81,7 +81,7 @@ public class NotificationController {
 		}
 
 		System.out.println("\n-< 공지사항 목록 >" + "-".repeat(44));
-		System.out.println("순번\t제목\t\t\t\t작성자\t작성일");
+		System.out.println("순번\t제목\t\t\t작성자\t작성일");
 		System.out.println("-".repeat(59));
 
 		// 공지사항이 존재하는 경우 StringBuilder에 저장
@@ -90,8 +90,6 @@ public class NotificationController {
 			// 고정 여부는 제목 앞에 ★ 표시
 			String fixed = notificationDTO.getFix() == 1 ? "[★] " : "";
 			if (notificationDTO.getTitle().length() < 9) {
-				tab = "\t\t\t";
-			} else if (notificationDTO.getTitle().length() < 13) {
 				tab = "\t\t";
 			} else {
 				tab = "\t";
