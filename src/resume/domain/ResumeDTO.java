@@ -1,10 +1,6 @@
 package resume.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import job.domain.JobDTO;
-import resume.model.ResumeDAO;
 
 public class ResumeDTO {
 

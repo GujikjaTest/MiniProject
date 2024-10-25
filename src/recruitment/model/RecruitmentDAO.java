@@ -10,7 +10,7 @@ import recruitment.domain.RecruitmentDTO;
 public interface RecruitmentDAO {
 
 	// 글목록보기
-	List<RecruitmentDTO> recruitmenList();
+	List<RecruitmentDTO> recruitmenList(String companyId);
 
 	// 채용공고 상세보기
 	// 단 1개에 관한 select문
@@ -23,7 +23,7 @@ public interface RecruitmentDAO {
 	int recruitmentUpdate(RecruitmentDTO recruitmentDTO);
 
 	// 채용공고 삭제
-	int recruitmentDelete(RecruitmentDTO recruitmentDTO);
+	int recruitmentDelete(RecruitmentDTO recruitmentDTO, CompanyDTO companyDTO);
 
 	// 지원자수 상위 10개의 채용공고 보기
 	List<RecruitmentDTO> recruitmenTopList();
