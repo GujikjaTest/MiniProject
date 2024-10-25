@@ -31,4 +31,7 @@ public interface CompanyDAO {
 	
 	//검색통합
 	List<CompanyDTO> companySearchList(String searchStr, String select);
+
+	// 리뷰 순위 top10 회사 목록
+	List<CompanyDTO> companyTopTenList();
 }
