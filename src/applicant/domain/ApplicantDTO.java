@@ -84,7 +84,7 @@ public class ApplicantDTO {
 	// 구직자 상세보기 출력
 	@Override
 	public String toString() {
-		return "-< " + name + "님 >--------------------------------------\n"
+		return "-< " + name + "님 회원정보 >--------------------------------------\n"
 		+ " ▣ 아이디 : " + applicantId + "\n"
 		+ " ▣ 비밀번호 : " + passwd + "\n"
 		+ " ▣ 이메일 : " + email + "\n"
