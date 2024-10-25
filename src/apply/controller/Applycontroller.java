@@ -16,7 +16,7 @@ import recruitment.model.RecruitmentDAO_imple;
 import utils.AlignUtil;
 import utils.Msg;
 
-public class Applycontroller {
+public class ApplyController {
 
 	RecruitmentDAO rdao = new RecruitmentDAO_imple();
 	ApplyDAO adao = new ApplyDAO_imple();

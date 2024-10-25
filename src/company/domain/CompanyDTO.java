@@ -1,5 +1,7 @@
 package company.domain;
 
+import utils.DisplayScore;
+
 public class CompanyDTO {
       //오라클의 tbl_company 테이블에 해당한다.
 	
@@ -20,6 +22,8 @@ public class CompanyDTO {
 	private String progress;		//채용진행상황
 	
 	//select용 feild
+	private float	score;				//총점
+	private int rank;		        //순위
 	
 	
 	
@@ -148,10 +152,34 @@ public class CompanyDTO {
 	}
 
 	public String companyInfo() {
-		return name+"\t  "+industry+"\t"+address+"\t"+businessNo+"\t"+progress;
+		return name+"\t"+industry+"\t"+address+"\t"+businessNo+"\t\t"+progress;
 	}
 
+	public String companyInfoWithScore() {
+		return rank+"\t"+ DisplayScore.getStar(score)+"\t\t"+name+"\t"+industry+"\t"+address+"\t"+progress;
+	}
 	
-	
-	
+	public String companyInfoWithoutPasswd() {
+		return  "-< "+name+" >-----------------------------------------\n"
+				+ "▣ 회사명 : " + name +"\n"
+				+ "▣ 업종 : " + industry + "\n"
+				+ "▣ 사업자등록번호 : " + businessNo+"\n"
+				+ "▣ 기업형태 : " + getBusinessTypeStr()+ "\n"
+				+ "▣ 주소 : " + address + "\n"
+				+ "▣ 연락처 : " + tel + "\n"
+				+ "▣ 이메일 : " +email + "\n"
+				+ "-".repeat(50);
+	}
+	public float getScore() {
+		return score;
+	}
+	public void setScore(float score) {
+		this.score = score;
+	}
+	public int getRank() {
+		return rank;
+	}
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
 }

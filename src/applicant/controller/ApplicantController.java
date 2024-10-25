@@ -8,10 +8,13 @@ import java.util.Scanner;
 
 import applicant.domain.ApplicantDTO;
 import applicant.model.*;
-import apply.controller.Applycontroller;
+import apply.controller.ApplyController;
+import company.controller.CompanyController;
+import notification.controller.NotificationController;
 import recruitment.controller.RecruitmentApplicantController;
+import recruitment.controller.RecruitmentController;
 import resume.controller.Resumecontroller;
-//import review.controller.ReviewController;
+import review.controller.ReviewController;
 import utils.Msg;
 import utils.ValidationUtil;
 
@@ -59,8 +62,16 @@ public class ApplicantController {
 		} while(true);
 
 		// 성명
-		System.out.print("▷ 성명 : ");
-		name = sc.nextLine();
+		do {
+			System.out.print("▷ 성명 : ");
+			name = sc.nextLine();
+			if(!name.isBlank() && name.length()<10) {
+				break;
+			}
+			else {
+				Msg.W("이름은 공백없이 10자 이하로 입력해야 합니다.");
+			}
+		} while(true);
 
 		// 생일
 		do {
@@ -148,51 +159,66 @@ public class ApplicantController {
 	
 	
 	// === 구직자 메인 메뉴 === //
-	public void applicantMenu(ApplicantDTO applicant, Scanner sc) {
+	public void applicantMenu(ApplicantDTO applicantDTO, Scanner sc) {
 		do {
-			System.out.println("\n=======< 구직자 메인 메뉴("+applicant.getName()+"님 로그인 중) >=======\n"
-							 + "1.내 정보 관리   2.이력서 관리   3.구인회사 찾기\n"
+			System.out.println("\n========< 구직자 메인 메뉴("+applicantDTO.getName()+"님 로그인 중) >=========\n"
+							 + "1.회원정보 관리   2.이력서 관리   3.구인회사 찾기\n"
 							 + "4.채용공고 찾기   5.입사지원 현황   6.리뷰 작성\n"
-							 + "7.공지사항 조회\n"
+							 + "7.채용공고 통계   8.공지사항 조회\n"
 							 + "0.로그아웃\n"
-							 + "=====================================================\n");
+							 + "=".repeat(50));
 			System.out.print("▷ 메뉴번호 선택 : ");
 			String menu = sc.nextLine();
 			
 			switch (menu) {
 			case "1": // 내 정보 관리
 				// 김규빈
+				boolean isLeave = getApplicant(applicantDTO, sc);
+				if(isLeave) {
+					return;
+				}
 				break;
 			
 			case "2": // 이력서 관리
 				// 이상우
 				Resumecontroller resumecontroller= new Resumecontroller();
-				resumecontroller.list_Resume(applicant); //구직자DTO를 인자값으로 넘기면 됨
+				resumecontroller.list_Resume(applicantDTO);
 				break;
 			
 			case "3": // 구인회사 찾기
 				// 이지혜
+				CompanyController companyCtrl = new CompanyController();
+				companyCtrl.searchCompany(sc);
 				break;
 			
 			case "4": // 채용공고 찾기
 				// 강이훈
 				RecruitmentApplicantController raCtrl = new RecruitmentApplicantController();
-				raCtrl.findRecruitment(applicant, sc); 
+				raCtrl.findRecruitment(applicantDTO, sc); 
 				break;
 			
 			case "5": // 입사지원 현황
 				// 이상우
-				Applycontroller applycontroller = new Applycontroller();
-				applycontroller.showAllapply(applicant.getApplicantId() );
+				ApplyController applyCtrl = new ApplyController();
+				applyCtrl.showAllapply(applicantDTO.getApplicantId() );
 				break;
 			
-			case "6": // 리뷰 작성 - 김규빈
-//				ReviewController reviewCtrl = new ReviewController();
-//				reviewCtrl.reviewMenu(applicant, sc);
+			case "6": // 리뷰 작성
+				// 김규빈
+				ReviewController reviewCtrl = new ReviewController();
+				reviewCtrl.reviewMenu(applicantDTO, sc);
 				break;
 			
-			case "7": // 공지사항 조회
+			case "7": // 채용공고 통계
+				// 김규빈
+				RecruitmentController rCtrl = new RecruitmentController();
+				rCtrl.recruitmentStatistics(sc);
+				break;
+			
+			case "8": // 공지사항 조회
 				// 김진성
+				NotificationController notiCtrl = new NotificationController();
+				notiCtrl.getNotificationDetails(false, sc);
 				break;
 			
 			case "0": // 로그아웃
@@ -206,6 +232,201 @@ public class ApplicantController {
 		} while(true);
 	}
 	
+
+	// === 구직자 정보관리 === //
+	private boolean getApplicant(ApplicantDTO applicantDTO, Scanner sc) {
+		do {
+			System.out.println("\n=== 회원정보 관리 ===");
+			
+			System.out.println(applicantDTO.toString());
+			System.out.print("=============< 메뉴 >=============\n"
+							 + "1.회원정보 수정   2.회원탈퇴   0.돌아가기\n"
+							 + "==============================\n"
+							 + "▷ 메뉴번호 선택 : ");
+			
+			String menu = sc.nextLine();
+			
+			switch (menu) {
+			case "0": // 돌아가기
+				return false;
+			
+			case "1": // 회원정보 수정
+				updateApplicant(applicantDTO, sc);
+				break;
+			
+			case "2": // 회원탈퇴
+				boolean isLeave = deleteApplicant(applicantDTO.getApplicantId(), sc);
+				if(isLeave) {
+					return isLeave;
+				}
+				break;
+	
+			default:
+				Msg.W("입력하신 메뉴 번호 "+menu+"는 존재하지 않습니다.");
+				break;
+			}
+		} while(true);
+	}
+
+
+	// === 구직자 정보수정 === //
+	private void updateApplicant(ApplicantDTO applicantDTO, Scanner sc) {
+		System.out.println("\n=== 회원정보 수정 ===");
+		
+		System.out.println(">> [주의사항] 변경하지 않고 예전의 데이터값을 그대로 사용하시려면 그냥 엔터하세요!! <<\n");
+		
+		String passwd, email, name, birthday, tel;
+		
+		// 비밀번호
+		do {
+			System.out.print("▷ 비밀번호[영문,숫자,특수문자 조합] : ");
+			passwd = sc.nextLine();
+			
+			if(passwd.isEmpty()) {
+				passwd = applicantDTO.getPasswd();
+				break;
+			}
+			else if(ValidationUtil.isPasswordValid(passwd)) {
+				break;
+			}
+		} while(true);
+		
+		// 이메일
+		do {
+			System.out.print("▷ 이메일 : ");
+			email = sc.nextLine();
+			
+			if(email.isEmpty()) {
+				email = applicantDTO.getEmail();
+				break;
+			}
+			else if(ValidationUtil.isEmailValid(email)) {
+				break;
+			}
+		} while(true);
+
+		// 성명
+		do {
+			System.out.print("▷ 성명 : ");
+			name = sc.nextLine();
+			if(name.isEmpty()) {
+				name = applicantDTO.getName();
+				break;
+			}
+			else if(name.length()<10) {
+				break;
+			}
+			else {
+				Msg.W("이름은 공백없이 10자 이하로 입력해야 합니다.");
+			}
+		} while(true);
+
+		// 생일
+		do {
+			System.out.print("▷ 생일[1999-01-01] : ");
+			birthday = sc.nextLine();
+			
+			if(birthday.isEmpty()) {
+				birthday = applicantDTO.getBirthday();
+				break;
+			}
+			
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false); // 엄격하게 파싱
+			
+			try {
+				sdf.parse(birthday); // 달력에 존재하는 날짜인지 확인
+				break;
+			} catch (ParseException e) {
+				Msg.W(birthday+"는 달력에 존재하지 않는 값입니다.");
+			}
+		} while(true);
+		
+		// 성별
+		int gender = 0;
+		do {
+			System.out.print("▷ 성별[남/여] : ");
+			String genderStr = sc.nextLine();
+			
+			if(genderStr.isEmpty()) {
+				gender = applicantDTO.getGender();
+				break;
+			}
+			else if(getGenderNumber(genderStr)==-1) {
+				Msg.W("'남' 또는 '여'만 입력 가능합니다.");
+			}
+			else {
+				gender = getGenderNumber(genderStr);
+				break;
+			}
+		} while(true);
+		
+		// 연락처
+		do {
+			System.out.print("▷ 연락처 : ");
+			tel = sc.nextLine();
+			
+			if(tel.isEmpty()) {
+				tel = applicantDTO.getTel();
+				break;
+			}
+			else if(ValidationUtil.isTelValid(tel)) {
+				break;
+			}
+		} while(true);
+		
+		applicantDTO.setBirthday(birthday);
+		applicantDTO.setEmail(email);
+		applicantDTO.setGender(gender);
+		applicantDTO.setName(name);
+		applicantDTO.setPasswd(passwd);
+		applicantDTO.setTel(tel);
+		
+		int n = applicantDAO.updateApplicant(applicantDTO);
+		
+		if(n==1) {
+			applicantDTO.setPasswd(passwd.substring(0,3) + "*".repeat( passwd.length()-3));
+			System.out.println(">> 회원정보 수정이 완료되었습니다. <<");
+		}
+		else {
+			System.out.println(">> 회원정보 수정에 실패했습니다. <<");
+		}
+	}
+
+
+	/*
+	 * 구직자 회원탈퇴
+	 * 회원탈퇴가 완료되면 true, 아니면 false
+	 */
+	private boolean deleteApplicant(String applicantId, Scanner sc) {
+
+		System.out.println("\n=== 회원탈퇴 ===");
+		do {
+			System.out.print("▷ 정말로 회원탈퇴를 하시겠습니까?[Y/N] : ");
+			String yn = sc.nextLine();
+			
+			if("y".equalsIgnoreCase(yn)) {
+				break;
+			}
+			else if ("n".equalsIgnoreCase(yn)) {
+				Msg.N("회원탈퇴가 취소되었습니다.");
+				return false;
+			}
+			else {
+				Msg.W("Y 또는 N 만 입력하세요.");
+			}
+		} while(true);
+		
+		int n = applicantDAO.deleteApplicant(applicantId);
+		
+		if(n==1) {
+			Msg.N("회원탈퇴가 완료되었습니다.");
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 	
 	// === 성별 "남", "여"를 받아 0, 1로 반환해주는 메소드 === //
 	private int getGenderNumber(String gender) {

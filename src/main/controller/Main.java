@@ -18,7 +18,7 @@ public class Main {
 			System.out.println("\n=====< 메인메뉴 >=====\n"
 					+ "1. 회원가입   2. 로그인\n"
 					+ "0. 프로그램 종료\n"
-					+ "======================");
+					+ "====================");
 			
 			System.out.print("▷ 메뉴 번호 선택 : ");
 			menu = sc.nextLine();

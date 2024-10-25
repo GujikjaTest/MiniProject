@@ -70,7 +70,9 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 		ApplicantDTO applicantDTO = null;
 		
 		try {
-			String sql = " select applicant_id, email, name, birthday, gender, tel "
+			String sql = " select applicant_id"
+					   + " , substr(passwd, 1, 3) || lpad('*', length(passwd)-3, '*') as passwd"
+					   + " , email, name, to_char(birthday, 'yyyy-mm-dd') AS birthday, gender, tel, status "
 					   + " from tbl_applicant "
 					   + " where status = 1 and applicant_id = ? and passwd = ? ";
 			
@@ -85,11 +87,13 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 				applicantDTO = new ApplicantDTO();
 				
 				applicantDTO.setApplicantId(rs.getString("applicant_id"));
+				applicantDTO.setPasswd(rs.getString("passwd"));
 				applicantDTO.setEmail(rs.getString("email"));
 				applicantDTO.setName(rs.getString("name"));
 				applicantDTO.setBirthday(rs.getString("birthday"));
 				applicantDTO.setGender(rs.getInt("gender"));
 				applicantDTO.setTel(rs.getString("tel"));
+				applicantDTO.setStatus(rs.getInt("status"));
 				
 			}
 			
@@ -100,6 +104,63 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 		}
 		
 		return applicantDTO;
+	}
+	
+	// === 회원정보수정 === //
+	@Override
+	public int updateApplicant(ApplicantDTO applicantDTO) {
+		int result = 0;
+		
+		try {
+			String sql = " UPDATE tbl_applicant"
+					   + " SET passwd = ?, email = ?, name = ?"
+					   + "   , birthday = to_date(?, 'yyyy-mm-dd')"
+					   + "   , gender = ?, tel = ? "
+					   + " WHERE applicant_id = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,  applicantDTO.getPasswd());
+			pstmt.setString(2,  applicantDTO.getEmail());
+			pstmt.setString(3,  applicantDTO.getName());
+			pstmt.setString(4,  applicantDTO.getBirthday());
+			pstmt.setInt(5,  applicantDTO.getGender());
+			pstmt.setString(6,  applicantDTO.getTel());
+			pstmt.setString(7,  applicantDTO.getApplicantId());
+			
+			result = pstmt.executeUpdate(); // sql문 실행
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return result;
+	}
+
+
+	// === 회원탈퇴 === //
+	@Override
+	public int deleteApplicant(String applicantId) {
+		
+		int result = 0;
+		
+		try {
+			String sql = " UPDATE tbl_applicant SET status = 1 "
+					   + " WHERE applicant_id = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, applicantId);
+			
+			result = pstmt.executeUpdate(); // sql문 실행
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+		return result;
 	}
 
 	// === 성명으로 구직자 목록 조회 === //

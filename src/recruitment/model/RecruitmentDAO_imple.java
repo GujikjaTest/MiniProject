@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -410,6 +411,60 @@ public class RecruitmentDAO_imple implements RecruitmentDAO {
 		
 		return recruitmentList;
 	}
+
 	
+	// *** 직종별 top 10 채용공고 수 가져오기를 해주는 메소드 *** //
+	@Override
+	public List<Map<String, String>> recruitmentStatistics(String status) {
+		List<Map<String, String>> rsMapList = new ArrayList<>();
+
+		try {
+			String rankSql = "";
+			
+			switch (status) {
+			case "":
+			case "1": // 직종별 채용공고 수
+				rankSql = "count(*)";
+				break;
+				
+			case "2": // 직종별 연봉순위
+				rankSql = "median(salary)";
+				break;
+			}
+			
+			String sql = " SELECT job_name, result, rank "
+					   + " FROM "
+					   + " ( "
+					   + " SELECT J.NAME AS job_name, "+rankSql+" AS result, RANK() OVER(ORDER BY "+rankSql+" DESC) AS rank "
+					   + " FROM tbl_recruitment RM JOIN tbl_job J "
+					   + " ON RM.fk_job_id = J.job_id "
+					   + " WHERE registerday >= sysdate - TO_YMINTERVAL('01-00') "
+					   + "     OR updateday >= sysdate - TO_YMINTERVAL('01-00') "
+					   + " GROUP BY J.NAME "
+					   + " ) "
+					   + " WHERE rank <= 10 ";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery(); // sql문 실행
+			
+			while(rs.next()) {
+				Map<String, String> rsMap = new HashMap<>();
+				
+				rsMap.put("jobName", rs.getString("job_name"));
+				rsMap.put("result", rs.getString("result"));
+				rsMap.put("rank", rs.getString("rank"));
+				
+				rsMapList.add(rsMap);
+			}
+
+			
+		} catch(SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+				
+		return rsMapList;
+	}
 
 }

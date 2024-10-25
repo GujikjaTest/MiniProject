@@ -12,6 +12,12 @@ public interface ApplicantDAO {
 	
 	// === 로그인 === //
 	ApplicantDTO login(Map<String, String> paraMap);
+	
+	// === 회원정보수정 === //
+	public int updateApplicant(ApplicantDTO applicantDTO);
+
+	// === 회원탈퇴 === //
+	public int deleteApplicant(String applicantId);
 
 	// == 성명으로 구직자 목록 조회 == //
 	public List<ApplicantDTO> getApplicantListByName(String name);

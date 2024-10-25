@@ -85,11 +85,13 @@ public class CompanyDAO_imple implements CompanyDAO {
 		CompanyDTO company = null;
 		
 		try {
-			String sql = " SELECT company_id, passwd, email, name, business_no, address, tel, industry,  "
+			String sql = " SELECT company_id"
+					+ " , substr(passwd, 1, 3) || lpad('*', length(passwd)-3, '*') as passwd"
+					+ " , email, name, business_no, address, tel, industry,  "
 					+ "       business_type "
 					+ " FROM tbl_company  "
 					+ " WHERE status = 1  "
-					+ "  AND company_id = ?  "
+					+ "  AND company_id = ? "
 					+ "  AND passwd = ?";
 
 		
@@ -176,13 +178,13 @@ public class CompanyDAO_imple implements CompanyDAO {
 		
 		switch(select){
 		case "1":
-			str = "where upper(name) like upper(?) ";
+			str = " where upper(name) like upper(?) ";
 			break;
 		case "2":
-			str = "where upper(industry) like upper(?) ";
+			str = " where upper(industry) like upper(?) ";
 			break;
 		case "3":
-			str = "where upper(address) like upper(?) ";
+			str = " where upper(address) like upper(?) ";
 		}
 		
 		List<CompanyDTO> companyList = new ArrayList<>();
@@ -191,7 +193,7 @@ public class CompanyDAO_imple implements CompanyDAO {
 	        String sql = " select name, industry, business_no, address, status, email, company_id, tel, "
 	                   + " case when progress is null then '채용없음' else progress end as progress "
 	                   + " from ("
-	                   + "    select name, industry, business_no, address, company_Id "
+	                   + "    select name, industry, business_no, address, company_Id, status, email, tel "
 	                   + "    from tbl_company "
 	                   + str
 	                   + " ) C "
@@ -217,6 +219,10 @@ public class CompanyDAO_imple implements CompanyDAO {
 	            companyDTO.setBusinessNo(rs.getString("business_no"));
 	            companyDTO.setAddress(rs.getString("address"));
 	            companyDTO.setProgress(rs.getString("progress"));
+	        	companyDTO.setStatus(rs.getInt("status"));
+	        	companyDTO.setEmail(rs.getString("email"));
+	        	companyDTO.setCompanyId(rs.getString("company_id"));
+	        	companyDTO.setTel(rs.getString("tel"));
 	            
 	            companyList.add(companyDTO);  // 리스트에 추가
 	        }
@@ -438,4 +444,67 @@ public class CompanyDAO_imple implements CompanyDAO {
 		return map;
 	}
 
+
+	// 리뷰 순위 top10 회사 목록
+	@Override
+	public List<CompanyDTO> companyTopTenList(){
+		
+		List<CompanyDTO> companyList = new ArrayList<>();
+	    
+	    try {
+	        String sql = " select name, industry, business_no, address, status, email, C.company_id, tel, score, rank, "
+	                   + " case when progress is null then '채용없음' else progress end as progress "
+	                   + " from ("
+	                   + "    select name, industry, business_no, address, company_Id, status, email, tel "
+	                   + "    from tbl_company "
+	                   + " ) C "
+	                   + " LEFT JOIN "
+	                   + " ( "
+	                   + "    select case when max(deadlineday) > sysdate then '진행중' else '마감' end as progress, fk_company_id "
+	                   + "    from tbl_recruitment "
+	                   + "    group by fk_company_id "
+	                   + " ) RM "
+	                   + " ON RM.fk_company_id = C.company_Id "
+	                   + " LEFT JOIN"
+	                   + " ( "
+	                   + "    select company_id, avg(SCORE) as score, RANK() OVER(ORDER BY avg(SCORE) DESC) AS rank "
+	                   + "    from tbl_company JOIN tbl_review "
+	                   + "    on company_id = fk_company_id "
+	                   + "    group by company_id"
+	                   + " ) V1 "
+	                   + " ON V1.company_id = RM.fk_company_Id "
+	                   + " where rownum <= 10 ";
+	        
+	        pstmt = conn.prepareStatement(sql);
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {  // 여러 행을 처리할 수 있도록 변경
+	            CompanyDTO companyDTO = new CompanyDTO();
+	            
+	            companyDTO.setName(rs.getString("name"));
+	            companyDTO.setIndustry(rs.getString("industry"));
+	            companyDTO.setBusinessNo(rs.getString("business_no"));
+	            companyDTO.setAddress(rs.getString("address"));
+	            companyDTO.setProgress(rs.getString("progress"));
+	        	companyDTO.setStatus(rs.getInt("status"));
+	        	companyDTO.setEmail(rs.getString("email"));
+	        	companyDTO.setCompanyId(rs.getString("company_id"));
+	        	companyDTO.setTel(rs.getString("tel"));
+	        	companyDTO.setScore(rs.getFloat("score"));
+	        	companyDTO.setRank(rs.getInt("rank"));
+	            
+	            companyList.add(companyDTO);  // 리스트에 추가
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        close();
+	    }
+	    
+	    return companyList;
+
+
+	}//companySearchList(String searchStr, String select)---------
 }
