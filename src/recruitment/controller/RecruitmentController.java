@@ -608,6 +608,7 @@ public class RecruitmentController {
 		else {
 			System.out.println("\n>> 채용공고 수정이 완료되었습니다. <<\n");
 			RecruitmentList.add(recruitmentDTO);
+			System.out.println(recruitmentDTO.toString()); // 채용공고를 보여주는 메소드
 			return;
 		}
 		

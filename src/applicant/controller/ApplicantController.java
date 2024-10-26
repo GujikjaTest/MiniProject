@@ -124,7 +124,7 @@ public class ApplicantController {
 		int n = applicantDAO.register(applicantDTO);
 		
 		if(n==1) {
-			System.out.println(">> 회원가입이 완료되었습니다. <<");
+			System.out.println(">> 회원가입이 완료되었습니다.(*´▽`*) <<");
 		}
 		else if(n==-1){
 			Msg.W("중복되는 아이디가 있어 회원가입이 불가합니다.");
@@ -388,7 +388,7 @@ public class ApplicantController {
 				else {
 					applicantDTO.setPasswd(passwd.substring(0,3) + "*".repeat(passwd.length()-3));
 				}
-				System.out.println(">> 회원정보 수정이 완료되었습니다. <<");
+				System.out.println(">> 회원정보 수정이 완료되었습니다.(*´▽`*) <<");
 			}
 			else {
 				System.out.println(">> 회원정보 수정에 실패했습니다. <<");

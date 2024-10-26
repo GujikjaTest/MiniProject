@@ -197,7 +197,7 @@ public class ReviewController {
 		int n = reviewDAO.registerReview(reviewDTO);
 		
 		if(n==1) {
-			Msg.N("리뷰 등록이 완료되었습니다.");
+			Msg.N("리뷰 등록이 완료되었습니다.(*´▽`*)");
 			// TODO 결과 출력
 		}
 		else {
@@ -279,7 +279,7 @@ public class ReviewController {
 		int n = reviewDAO.updateReview(reviewDTO);
 		
 		if(n==1) {
-			Msg.N("리뷰 수정이 완료되었습니다.");
+			Msg.N("리뷰 수정이 완료되었습니다.(*´▽`*)");
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
 			reviewDTO.setUpdateday(sdf.format(new Date()));
 			System.out.println(reviewDTO.toString());
