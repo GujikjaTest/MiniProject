@@ -4,6 +4,7 @@ import apply.domain.ApplyDTO;
 import common.Transaction;
 import company.domain.CompanyDTO;
 import job.domain.JobDTO;
+import utils.AlignUtil;
 
 //RecruitmenDTO 은 오라클의 TBL_RECRUITMENT에 해당하며, TBL_COMMPANY 와 TBL_JOB 을 참조합니다.
 public class RecruitmentDTO { 
@@ -161,7 +162,7 @@ public class RecruitmentDTO {
         return "-< "+recruitmentId+"번 채용공고 >------------------------------\n"+
         	   "1.회사명 : " + comdto.getName()+"\n"+
 		       "2.채용제목 : " + title+"\n"+
-			   "3.채용내용 : " + contents+"\n"+
+			   "3.채용내용 : " + AlignUtil.contents(contents) +"\n"+
 			   "4.직종 : " + jobdto.getName()+"\n"+ // ----------------------------- 확인해보기
 			   "5.경력 : " + Transaction.experience(experience)+"\n"+
 			   "6.채용형태 : " + Transaction.empType(empType)+"\n"+
