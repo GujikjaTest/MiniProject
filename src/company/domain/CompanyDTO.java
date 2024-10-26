@@ -1,5 +1,6 @@
 package company.domain;
 
+import utils.AlignUtil;
 import utils.DisplayScore;
 
 public class CompanyDTO {
@@ -152,15 +153,15 @@ public class CompanyDTO {
 	}
 
 	public String companyInfo() {
-		return name+"\t"+industry+"\t"+address+"\t"+businessNo+"\t\t"+progress;
+		return name+"\t\t"+industry+"\t\t"+address+"\t"+businessNo+"\t\t"+progress;
 	}
 
 	public String companyInfoWithScore() {
-		return rank+"\t"+ DisplayScore.getStar(score)+"\t\t"+name+"\t"+industry+"\t"+address+"\t"+progress;
+		return rank+"\t"+ DisplayScore.getStar(score)+"\t"+name+"\t\t"+industry+"\t\t"+address+"\t"+progress;
 	}
 	
 	public String companyInfoWithoutPasswd() {
-		return  "-< "+name+" >-----------------------------------------\n"
+		return  AlignUtil.title("-"+name)
 				+ "▣ 회사명 : " + name +"\n"
 				+ "▣ 업종 : " + industry + "\n"
 				+ "▣ 사업자등록번호 : " + businessNo+"\n"

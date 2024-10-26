@@ -23,7 +23,7 @@ public class DisplayScore {
 			sb.append("☆");
 		}
 		
-		sb.append(" "+num);
+		sb.append("\t"+Math.floor(num*10)/10.0);
 		
 		return sb.toString();
 	}

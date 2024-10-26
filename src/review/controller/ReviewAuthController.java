@@ -130,7 +130,7 @@ public class ReviewAuthController {
 		System.out.println("\n=== 회사 인증 요청 ===");
 		// TODO 회사검색 후 출력
 		CompanyController companyCtrl = new CompanyController();
-		String companyId = companyCtrl.searchCompanyWithReview(sc, "1");
+		String companyId = companyCtrl.searchCompanyWithReview(sc, "0");
 		
 		if(companyId == null) {
 			Msg.N("회사 인증을 취소하였습니다.");

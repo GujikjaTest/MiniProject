@@ -43,8 +43,6 @@ public class ApplyDAO_imple implements ApplyDAO {
 	   public List<ApplyDTO> applyList(RecruitmentDTO recruitmentDTO) {
 
 	      List<ApplyDTO> ApplyList = new ArrayList<>();
-	      ApplyDTO applyDTO = new ApplyDTO();
-	      ApplicantDTO applicantDTO = new ApplicantDTO();
 	      
 	      try {
 	         
@@ -80,6 +78,9 @@ public class ApplyDAO_imple implements ApplyDAO {
 	         rs = pstmt.executeQuery();
 
 	         while(rs.next()) {
+				ApplyDTO applyDTO = new ApplyDTO();
+				ApplicantDTO applicantDTO = new ApplicantDTO();
+				
 	            applyDTO.setApply_id(rs.getInt("apply_id"));
 	            
 	            applicantDTO.setName(rs.getString("name"));

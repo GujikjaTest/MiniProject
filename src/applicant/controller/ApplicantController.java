@@ -12,7 +12,6 @@ import apply.controller.ApplyController;
 import company.controller.CompanyController;
 import notification.controller.NotificationController;
 import recruitment.controller.RecruitmentApplicantController;
-import recruitment.controller.RecruitmentController;
 import resume.controller.Resumecontroller;
 import review.controller.ReviewController;
 import utils.Msg;
@@ -125,7 +124,10 @@ public class ApplicantController {
 		int n = applicantDAO.register(applicantDTO);
 		
 		if(n==1) {
-			System.out.println(">> 회원가입이 완료되었습니다. <<");
+			System.out.println(">> 회원가입이 완료되었습니다.(*´▽`*) <<");
+		}
+		else if(n==-1){
+			Msg.W("중복되는 아이디가 있어 회원가입이 불가합니다.");
 		}
 		else {
 			System.out.println(">> 회원가입에 실패했습니다. <<");
@@ -164,7 +166,7 @@ public class ApplicantController {
 			System.out.println("\n========< 구직자 메인 메뉴("+applicantDTO.getName()+"님 로그인 중) >=========\n"
 							 + "1.회원정보 관리   2.이력서 관리   3.구인회사 찾기\n"
 							 + "4.채용공고 찾기   5.입사지원 현황   6.리뷰 작성\n"
-							 + "7.채용공고 통계   8.공지사항 조회\n"
+							 + "7.공지사항 조회\n"
 							 + "0.로그아웃\n"
 							 + "=".repeat(50));
 			System.out.print("▷ 메뉴번호 선택 : ");
@@ -209,16 +211,10 @@ public class ApplicantController {
 				reviewCtrl.reviewMenu(applicantDTO, sc);
 				break;
 			
-			case "7": // 채용공고 통계
-				// 김규빈
-				RecruitmentController rCtrl = new RecruitmentController();
-				rCtrl.recruitmentStatistics(sc);
-				break;
-			
-			case "8": // 공지사항 조회
+			case "7": // 공지사항 조회
 				// 김진성
 				NotificationController notiCtrl = new NotificationController();
-				notiCtrl.getNotificationDetails(false, sc);
+				notiCtrl.notificationMenu(null, false, sc);
 				break;
 			
 			case "0": // 로그아웃
@@ -282,11 +278,7 @@ public class ApplicantController {
 			System.out.print("▷ 비밀번호[영문,숫자,특수문자 조합] : ");
 			passwd = sc.nextLine();
 			
-			if(passwd.isEmpty()) {
-				passwd = applicantDTO.getPasswd();
-				break;
-			}
-			else if(ValidationUtil.isPasswordValid(passwd)) {
+			if(passwd.isEmpty() || ValidationUtil.isPasswordValid(passwd)) {
 				break;
 			}
 		} while(true);
@@ -379,17 +371,28 @@ public class ApplicantController {
 		applicantDTO.setEmail(email);
 		applicantDTO.setGender(gender);
 		applicantDTO.setName(name);
-		applicantDTO.setPasswd(passwd);
 		applicantDTO.setTel(tel);
 		
-		int n = applicantDAO.updateApplicant(applicantDTO);
+		String old_passwd = applicantDTO.getPasswd();
+		applicantDTO.setPasswd(passwd);
 		
-		if(n==1) {
-			applicantDTO.setPasswd(passwd.substring(0,3) + "*".repeat( passwd.length()-3));
-			System.out.println(">> 회원정보 수정이 완료되었습니다. <<");
-		}
-		else {
-			System.out.println(">> 회원정보 수정에 실패했습니다. <<");
+		boolean yn = Msg.YN("회원정보 수정", sc);
+		
+		if(yn) {
+			int n = applicantDAO.updateApplicant(applicantDTO);
+			
+			if(n==1) {
+				if(passwd.isEmpty()) {
+					applicantDTO.setPasswd(old_passwd);
+				}
+				else {
+					applicantDTO.setPasswd(passwd.substring(0,3) + "*".repeat(passwd.length()-3));
+				}
+				System.out.println(">> 회원정보 수정이 완료되었습니다.(*´▽`*) <<");
+			}
+			else {
+				System.out.println(">> 회원정보 수정에 실패했습니다. <<");
+			}
 		}
 	}
 
@@ -401,31 +404,19 @@ public class ApplicantController {
 	private boolean deleteApplicant(String applicantId, Scanner sc) {
 
 		System.out.println("\n=== 회원탈퇴 ===");
-		do {
-			System.out.print("▷ 정말로 회원탈퇴를 하시겠습니까?[Y/N] : ");
-			String yn = sc.nextLine();
+
+		boolean yn = Msg.YN("회원탈퇴", sc);
+		
+		if(yn) {
+			int n = applicantDAO.deleteApplicant(applicantId);
 			
-			if("y".equalsIgnoreCase(yn)) {
-				break;
+			if(n==1) {
+				Msg.N("회원탈퇴가 완료되었습니다.");
+				return true;
 			}
-			else if ("n".equalsIgnoreCase(yn)) {
-				Msg.N("회원탈퇴가 취소되었습니다.");
-				return false;
-			}
-			else {
-				Msg.W("Y 또는 N 만 입력하세요.");
-			}
-		} while(true);
-		
-		int n = applicantDAO.deleteApplicant(applicantId);
-		
-		if(n==1) {
-			Msg.N("회원탈퇴가 완료되었습니다.");
-			return true;
 		}
-		else {
-			return false;
-		}
+		
+		return false;
 	}
 	
 	// === 성별 "남", "여"를 받아 0, 1로 반환해주는 메소드 === //

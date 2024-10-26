@@ -11,6 +11,7 @@ import applicant.model.ApplicantDAO;
 import applicant.model.ApplicantDAO_imple;
 import company.model.CompanyDAO;
 import company.model.CompanyDAO_imple;
+import recruitment.controller.RecruitmentController;
 import resume.model.ResumeDAO;
 import resume.model.ResumeDAO_imple;
 import utils.AlignUtil;
@@ -26,8 +27,6 @@ public class StatisticsController {
 
 	private final CompanyDAO companyDAO = new CompanyDAO_imple(); // 구인회사 DAO 구현체
 
-//	private final RecruitmentDAO recruitmentDAO = new RecruitmentDAO_imple(); // 채용공고 DAO 구현체
-
 	private final ResumeDAO resumeDAO = new ResumeDAO_imple(); // 이력서 DAO 구현체
 
 	private StringBuilder sb = new StringBuilder(); // StringBuilder 객체 초기화
@@ -40,7 +39,7 @@ public class StatisticsController {
 
 		do {
 			System.out.println("\n=============== < 관리자 통계 메뉴(" + adminDTO.getName() + "님 로그인 중) > ===============");
-			System.out.println("1.구직자 통계   2.구인회사/채용공고 통계   0.돌아가기");
+			System.out.println("1.구직자 통계   2.구인회사 통계   3.채용공고 통계   0.돌아가기");
 			System.out.println("=".repeat(64));
 
 			System.out.print("▷ 메뉴번호 선택 : ");
@@ -55,8 +54,13 @@ public class StatisticsController {
 				applicantStats(sc);
 				break;
 			}
-			case "2": { // 구인회사/채용공고 통계
+			case "2": { // 구인회사 통계
 				companyStats(sc);
+				break;
+			}
+			case "3": { // 채용공고 통계
+				RecruitmentController recruitmentCtrl = new RecruitmentController();
+				recruitmentCtrl.recruitmentStatistics(sc);
 				break;
 			}
 			default:
@@ -72,7 +76,7 @@ public class StatisticsController {
 		String menu = null; // 메뉴 번호
 		do {
 			System.out.println("\n===================== < 구직자 통계 메뉴 > =========================");
-			System.out.println("1.구직자 성별 통계   2.구직자 경력 통계   3.구직자 학력 통계\n4.구직자 희망직종/연봉 통계(이력서가 존재하는 구직자 한정)   0.돌아가기");
+			System.out.println("1.구직자 성별 통계   2.구직자 경력 통계   3.구직자 학력 통계\n4.구직자 희망직종 통계(이력서가 존재하는 구직자 한정)   0.돌아가기");
 			System.out.println("=".repeat(64));
 
 			System.out.print("▷ 메뉴번호 선택 : ");
@@ -221,7 +225,7 @@ public class StatisticsController {
 	}
 
 	/*
-	 * 구인회사/채용공고 통계
+	 * 구인회사 통계
 	 */
 	private void companyStats(Scanner sc) {
 		System.out.println("\n=== 구인회사 통계 ===\n");

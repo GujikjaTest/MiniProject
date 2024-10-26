@@ -1,5 +1,6 @@
 package review.domain;
 
+import utils.AlignUtil;
 import utils.DisplayScore;
 
 public class ReviewDTO {
@@ -73,7 +74,7 @@ public class ReviewDTO {
 			return "(내용 없음)";
 		}
 		else {
-			return contents;
+			return AlignUtil.contents(contents);
 		}
 	}
 	

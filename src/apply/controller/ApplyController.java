@@ -9,7 +9,6 @@ import apply.domain.ApplyDTO;
 import apply.model.ApplyDAO;
 import apply.model.ApplyDAO_imple;
 import common.Transaction;
-import recruitment.controller.RecruitmentController;
 import recruitment.domain.RecruitmentDTO;
 import recruitment.model.RecruitmentDAO;
 import recruitment.model.RecruitmentDAO_imple;
@@ -22,7 +21,6 @@ public class ApplyController {
 	ApplyDAO adao = new ApplyDAO_imple();
 	
 	public void showAllapply(String applicant_Id) {		// 입사지원 현황
-		RecruitmentController RecruitmentController = new RecruitmentController();
 		
 		//입사지원서 출력 메소드
 		show_motivation_Apply(applicant_Id); 
@@ -46,10 +44,10 @@ public class ApplyController {
 			for(int i=0;i<applyList.size();i++) {
 				
 				sb.append(
-						  "\n-< "+ applyList.get(i).getRecruitmentDTO().getRecruitmentId() +"번 채용공고 >------------------------------\n"+
+						  "\n"+AlignUtil.title("-"+ applyList.get(i).getRecruitmentDTO().getRecruitmentId() +"번 채용공고", 50) +
 						  "1.회사명 : " 		+ applyList.get(i).getCompanyDTO().getName()+"\n"+ //회사 아이디를 통해 
 						  "2.채용제목 : " 		+ applyList.get(i).getRecruitmentDTO().getTitle() + "\n" +  
-						  "3.채용내용 : " 		+ applyList.get(i).getRecruitmentDTO().getContents() + "\n" + 
+						  "3.채용내용 : " 		+ AlignUtil.contents(applyList.get(i).getRecruitmentDTO().getContents()) + "\n" + 
 						  "4.직종 : "			+ applyList.get(i).getJobDTO().getName()+"\n" + 	//직종 일련번호를 통해
 						  "5.경력 : " 		+ Transaction.experience(applyList.get(i).getRecruitmentDTO().getExperience())  + "\n" + 
 						  "6.채용형태 : " 		+ Transaction.empType(applyList.get(i).getRecruitmentDTO().getEmpType())  + "\n" + 
@@ -59,7 +57,7 @@ public class ApplyController {
 						  "10.등록일자 : "		+ applyList.get(i).getRecruitmentDTO().getRegisterday() + "\n" + 
 						  "11.채용마감일자 : " 	+ applyList.get(i).getRecruitmentDTO().getDeadlineday() +  "\n" + 
 						  "-".repeat(50)+"\n" +
-						  "▣ 지원동기 : "		+ applyList.get(i).getMotivation() + "\n" + 
+						  "▣ 지원동기 : "		+ AlignUtil.contents(applyList.get(i).getMotivation()) + "\n" + 
 						  "▣ 지원일자 : " 	+ applyList.get(i).getRegisterday() +"\n");
 				
 			}//end of for -------------
@@ -74,9 +72,9 @@ public class ApplyController {
 		List<ApplyDTO> ApplyList = adao.applyList(recruitmentDTO); // 입자지원자 목록 조회
 		StringBuilder sb = new StringBuilder();
 		
-		sb.append(AlignUtil.title("-입사지원자 목록", 48)
+		sb.append(AlignUtil.title("-입사지원자 목록", 50)
 				+ "지원서순번\t이름\t지원동기\t\t입사지원일\n"
-				+ "-".repeat(46)+"\n");// 입자지원자 목록 타이틀
+				+ "-".repeat(50)+"\n");// 입자지원자 목록 타이틀
 		
 		if(ApplyList.size()==0) {
 			Msg.N("입자지원자가 존재하지 않습니다.");
@@ -88,7 +86,7 @@ public class ApplyController {
 						  ApplyList.get(i).getMotivation()+"\t\t"+
 						  ApplyList.get(i).getRegisterday()+"\n");
 			} // end of for()-------------
-			sb.append("-".repeat(46)+"\n");
+			sb.append("-".repeat(50)+"\n");
 			
 			System.out.println(AlignUtil.tab(sb).toString());
 		}
@@ -128,26 +126,28 @@ public class ApplyController {
 			return;
 		}
 		else {
-			System.out.println("\n=== 지원자 이력서 조회 ===\n"
-							 + "-< "+Info.get("applicantName")+"님의 정보 >"+"-".repeat(30)+"\n"
-							 + "1.채용응모번호 : " + Info.get("apply_id") +"\n"
+			System.out.println("\n=== " + Info.get("applicantName") + "님의 입사지원서 조회 ===\n"
+							 + AlignUtil.title("-"+Info.get("applicantName")+"님의 정보", 50)
+							 + "1.입사지원서번호 : " + Info.get("apply_id") +"\n"
 							 + "2.채용제목 : "+Info.get("title")+"\n"
 							 + "3.지원자명 : "+Info.get("applicantName")+"\n"
 							 + "4.성별 : "+Transaction.gender(Integer.parseInt(Info.get("gender")))+"\n"
 							 + "5.생년월일 : "+Info.get("birthday")+"\n"
 							 + "6.휴대폰번호 : "+Info.get("tel")+"\n"
-							 + "7.이메일 : "+Info.get("email")+"\n"
-							 +"-".repeat(46)+"\n");
+							 + "7.이메일 : "+Info.get("email")+"\n");
 			
+			sb.append(AlignUtil.title("-이력서", 50)
+					+ "▣ 경력 : " + Transaction.experience(Integer.parseInt(Info.get("Rexperience"))) + "\n"
+					+ "▣ 학력 : "+ Transaction.education(Integer.parseInt(Info.get("education"))) + "\n"
+					+ "▣ 희망근무지역 : " + Info.get("hope_location") + "\n"
+					+ "▣ 희망직종 : " + Info.get("hopejobName") + "\n"
+					+ "▣ 직무기술 : " + Info.get("job_description") + "\n"
+					+ "▣ 희망연봉 : " + Transaction.salary(Integer.parseInt(Info.get("hope_salary"))) + "\n\n");
 			
-			sb.append(AlignUtil.title("-이력서", 52)
-					+ "경력\t학력\t희망근무지역 희망직종 직무기술\t희망연봉\n"
-					+ "-".repeat(50)+"\n");
-			
-			sb.append(Transaction.experience(Integer.parseInt(Info.get("Rexperience")))+"\t"+Transaction.education(Integer.parseInt(Info.get("education")))+"\t"+Info.get("hope_location")+"  "+"\t"+Info.get("hopejobName")+" "+"\t"+Info.get("job_description")+"\t"+Transaction.salary(Integer.parseInt(Info.get("hope_salary")))+"\t"+"\n"
-					+ "-".repeat(50)+"\n"
-					+ "지원동기 : "+Info.get("motivation")+"\n"
-					+ "작성일자 : "+Info.get("registerday")+"\n");
+			sb.append(AlignUtil.title("-지원동기", 50)
+					+ "▣ 지원동기 : "+AlignUtil.contents(Info.get("motivation"))+"\n"
+					+ "▣ 작성일자 : "+Info.get("registerday")+"\n"
+					+ "-".repeat(50) + "\n");
 			
 			System.out.println(AlignUtil.tab(sb).toString());
 			

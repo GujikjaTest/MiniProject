@@ -86,8 +86,7 @@ public class CompanyDAO_imple implements CompanyDAO {
 		
 		try {
 			String sql = " SELECT company_id"
-					+ " , substr(passwd, 1, 3) || lpad('*', length(passwd)-3, '*') as passwd"
-					+ " , email, name, business_no, address, tel, industry,  "
+					+ " , passwd, email, name, business_no, address, tel, industry,  "
 					+ "       business_type "
 					+ " FROM tbl_company  "
 					+ " WHERE status = 1  "
@@ -177,6 +176,7 @@ public class CompanyDAO_imple implements CompanyDAO {
 		String str = "";
 		
 		switch(select){
+		default:
 		case "1":
 			str = " where upper(name) like upper(?) ";
 			break;
@@ -465,7 +465,7 @@ public class CompanyDAO_imple implements CompanyDAO {
 	                   + "    group by fk_company_id "
 	                   + " ) RM "
 	                   + " ON RM.fk_company_id = C.company_Id "
-	                   + " LEFT JOIN"
+	                   + " JOIN"
 	                   + " ( "
 	                   + "    select company_id, avg(SCORE) as score, RANK() OVER(ORDER BY avg(SCORE) DESC) AS rank "
 	                   + "    from tbl_company JOIN tbl_review "

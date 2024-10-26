@@ -249,15 +249,12 @@ public class CompanyController {
 				recruitmentCtrl.menuRecruitment(companyDTO , sc);
 				break;
 				
-				
-			case "4"://공지사항
+			case "4"://공지사항 - 김진성
 				NotificationController notiCtrl = new NotificationController();
-				notiCtrl.getNotificationDetails(false, sc);
+				notiCtrl.notificationMenu(null, false, sc);
 				break;
 		
-		
 			case "0"://로그아웃
-		
 				return;
 	
 			default:
@@ -324,11 +321,20 @@ public class CompanyController {
 
 		
 		
-		System.out.print("▷ 비밀번호 [영어, 숫자, 특수문자 조합] :");
-		String passwd = sc.nextLine();
-		if(passwd.isBlank()) {
-			passwd = companyDTO.getPasswd();
-		}
+		// 비밀번호
+		String passwd;
+		do {
+			System.out.print("▷ 비밀번호[영문,숫자,특수문자 조합] : ");
+			passwd = sc.nextLine();
+			
+			if(passwd.isEmpty()) {
+				passwd = companyDTO.getPasswd();
+				break;
+			}
+			else if(ValidationUtil.isPasswordValid(passwd)) {
+				break;
+			}
+		} while(true);
 		
 		System.out.print("▷ 이메일 : ");
 		String email = sc.nextLine();
@@ -427,7 +433,7 @@ public class CompanyController {
 		    	
 		    }
 	    	else if("n".equalsIgnoreCase(yn)) {//n을 입력했을 경우
-	    		System.out.println("글 수정을 취소했습니다.\n");
+	    		System.out.println("정보 수정을 취소했습니다.\n");
 	    		return;
 	    	}
 	    
@@ -440,29 +446,29 @@ public class CompanyController {
 
 	
 	public String title() {
-		return "번호\t회사명\t업종\t지역\t사업자등록번호\t채용진행상황";
+		return "번호\t회사명\t\t업종\t\t지역\t사업자등록번호\t채용진행상황";
 	}
 	public String titleWithScore() {
-		return "순위\t별점\t\t회사명\t업종\t지역\t채용진행상황";
+		return "순위\t별점\t\t회사명\t\t업종\t\t지역\t채용진행상황";
 	}
 	
 
 	
 	public String kategorie() {
-		return "=======< 카테고리별 검색 메뉴 >=======\n"
-			 + "1.회사명  2.업종별  3.지역별  0.나가기\n"
-			 + "==================================";
+		return AlignUtil.title("=카테고리별 회사 검색 메뉴", 35)
+			 + "1.회사명   2.업종별   3.지역별   0.나가기\n"
+			 + "=".repeat(35);
 	}
 	
 	// === 구인회사찾기 === //
 	public void searchCompany(Scanner sc) {
 		System.out.println("=== 구인회사 검색 ===");
-		System.out.println("-< 리뷰점수 상위 10개 구인회사 >---------------------------------");
+		System.out.println("-< 리뷰점수 상위 10개 구인회사 >"+"-".repeat(48));
 
 		System.out.println(titleWithScore() );
-		System.out.println("-".repeat(60));
+		System.out.println("-".repeat(75));
 		companyTopTenList(); // 리뷰 top10 출력
-		System.out.println("-".repeat(60));
+		System.out.println("-".repeat(75));
 		
 		
 		do {
@@ -497,7 +503,7 @@ public class CompanyController {
 	}//end of public void searchCompany(CompanyDTO companyDTO, Scanner sc) --------------------
 	
 	
-	// 리뷰 Top 10 회사 목록 출력
+	// 리뷰 Top 10 회사 목록 출력 - 김규빈
 	private void companyTopTenList() {
 		List<CompanyDTO> companyList = cdao.companyTopTenList();
 		
@@ -509,11 +515,13 @@ public class CompanyController {
 	}
 
 	
-	// 회사 통합 검색
+	// 회사 통합 검색 - 김규빈
 	public String searchCompanyWithReview(Scanner sc, String select) {
+		boolean isVisibleReview = true; // 리뷰를 보여줄 필요가 있는가?
 		String searchType = "";
 		switch (select) {
 		default:
+			isVisibleReview = false;
 		case "1":
 			searchType = "회사명";
 			break;
@@ -534,14 +542,14 @@ public class CompanyController {
 			
 			StringBuilder sb = new StringBuilder();
 			
-			System.out.println("-< '"+companyName+"'에 대한 검색결과 >-------------------------------------------");
+			System.out.print(AlignUtil.title("-'"+companyName+"'에 대한 검색결과",75));
 			System.out.println(title());
-			System.out.println("-".repeat(60));
+			System.out.println("-".repeat(75));
 			
 			for(int i = 0; i<companyList.size();i++) {
 				sb.append((i+1)+"\t"+companyList.get(i).companyInfo()+"\n");
 			}
-			sb.append("-".repeat(60));
+			sb.append("-".repeat(75));
 			System.out.println(AlignUtil.tab(sb).toString());
 			
 		}
@@ -563,12 +571,22 @@ public class CompanyController {
 				
 				System.out.println((companyList.get(i-1).companyInfoWithoutPasswd()));
 				
-				ReviewController reviewCtrl = new ReviewController();
-				reviewCtrl.reviewCompanyMenu(companyList.get(i-1).getCompanyId(), sc);
-				
-				System.out.println();
-				
-				return companyList.get(i-1).getCompanyId();
+				if(isVisibleReview) { // 리뷰를 보여줄 필요가 있는가?
+					ReviewController reviewCtrl = new ReviewController();
+					reviewCtrl.reviewCompanyMenu(companyList.get(i-1).getCompanyId(), sc);
+					
+					return companyList.get(i-1).getCompanyId();
+				}
+				else {
+					boolean yn = Msg.YN("'"+companyList.get(i-1).getName()+"'회사 선택", sc);
+					
+					if(yn) {
+						return companyList.get(i-1).getCompanyId();
+					}
+					else {
+						return null;
+					}
+				}
 			}
 			else if(Integer.parseInt(num) == 0) {
 				return null;
