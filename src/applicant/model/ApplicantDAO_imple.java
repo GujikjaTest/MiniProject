@@ -39,7 +39,21 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 		int result = 0;
 		
 		try {
-			String sql = " insert into tbl_applicant(applicant_id, passwd, email, name, birthday, gender, tel) "
+			// 아이디 중복 검사
+			String sql = " select applicant_id"
+					+ " from tbl_applicant"
+					+ " where applicant_id = ? ";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,  applicantDTO.getApplicantId());
+			
+			rs = pstmt.executeQuery(); // sql문 실행
+			
+			if(rs.next()) {
+				return -1;
+			}
+			
+			sql = " insert into tbl_applicant(applicant_id, passwd, email, name, birthday, gender, tel) "
 					   + " values(?, ?, ?, ?, to_date(?, 'yyyy-mm-dd'), ?, ?) ";
 			
 			pstmt = conn.prepareStatement(sql);
@@ -110,22 +124,30 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 	@Override
 	public int updateApplicant(ApplicantDTO applicantDTO) {
 		int result = 0;
+		String passwd = applicantDTO.getPasswd().isEmpty() ? "" : ", passwd = ? ";
 		
 		try {
 			String sql = " UPDATE tbl_applicant"
-					   + " SET passwd = ?, email = ?, name = ?"
+					   + " SET email = ?, name = ?"
 					   + "   , birthday = to_date(?, 'yyyy-mm-dd')"
-					   + "   , gender = ?, tel = ? "
+					   + "   , gender = ?, tel = ? " + passwd
 					   + " WHERE applicant_id = ? ";
 			
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1,  applicantDTO.getPasswd());
-			pstmt.setString(2,  applicantDTO.getEmail());
-			pstmt.setString(3,  applicantDTO.getName());
-			pstmt.setString(4,  applicantDTO.getBirthday());
-			pstmt.setInt(5,  applicantDTO.getGender());
-			pstmt.setString(6,  applicantDTO.getTel());
-			pstmt.setString(7,  applicantDTO.getApplicantId());
+			
+			pstmt.setString(1,  applicantDTO.getEmail());
+			pstmt.setString(2,  applicantDTO.getName());
+			pstmt.setString(3,  applicantDTO.getBirthday());
+			pstmt.setInt(4,  applicantDTO.getGender());
+			pstmt.setString(5,  applicantDTO.getTel());
+			
+			if(!applicantDTO.getPasswd().isEmpty()) {
+				pstmt.setString(6,  applicantDTO.getPasswd());
+				pstmt.setString(7,  applicantDTO.getApplicantId());
+			}
+			else {
+				pstmt.setString(6,  applicantDTO.getApplicantId());
+			}
 			
 			result = pstmt.executeUpdate(); // sql문 실행
 			
@@ -173,10 +195,10 @@ public class ApplicantDAO_imple implements ApplicantDAO {
 		try {
 			String sql = " select applicant_id, passwd, email, name, to_char(birthday,'yyyy-mm-dd') as birthday, gender, tel, status "
 					   + " from tbl_applicant "
-					   + " where name = ? ";
+					   + " where name like ? ";
 			
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, name);
+			pstmt.setString(1, "%"+name+"%");
 			
 			rs = pstmt.executeQuery(); // sql문 실행
 			

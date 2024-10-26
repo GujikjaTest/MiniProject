@@ -51,13 +51,13 @@ public class RecruitmentApplicantController {
 			}
 			else {
 				sb.setLength(0);
-				sb.append("-< 지원자수 상위 10개 채용공고 >"+"-".repeat(50)+"\n");
-				sb.append("순위\t회사명\t직종\t\t제목\t\t경력\t채용형태\t마감일\n");
-				sb.append("-".repeat(74)+"\n");
+				sb.append(AlignUtil.title("-지원자수 상위 10개 채용공고", 83));
+				sb.append("순위\t회사명\t\t직종\t\t제목\t\t경력\t채용형태\t마감일\n");
+				sb.append("-".repeat(83)+"\n");
 				
 				for(int i=0; i<RecruitmentList.size();i++) {
 					sb.append(RecruitmentList.get(i).getRank()+"\t"+
-							  RecruitmentList.get(i).getComdto().getName()+"\t"+
+							  RecruitmentList.get(i).getComdto().getName()+"\t\t"+
 							  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
 							  RecruitmentList.get(i).getTitle()+"\t\t"+
 							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
@@ -136,82 +136,78 @@ public class RecruitmentApplicantController {
 		
 		RecruitmentList = new ArrayList<>();
 		RecruitmentList = rdao.showAllRecruitment(map);
-		StringBuilder sb = new StringBuilder();
 		
 		if(RecruitmentList == null) {
 			System.out.println(">> 검색 결과가 없습니다. <<\n");
 			return;
 		}
 		else {
-			if(map.get("status").equals("1")) { // 회사명
-				sb.append("-< "+map.get("search")+" 회사명 검색결과 >"+"-".repeat(50)+"\n");
-			}
-			else if(map.get("status").equals("2")) { // 직종별
-				sb.append("-< "+ RecruitmentList.get(0).getJobdto().getName()+" 직종 검색결과 >"+"-".repeat(56)+"\n");
-			}
-			else if(map.get("status").equals("3")) { // 지역별
-				sb.append("-< "+map.get("search")+" 지역 검색결과 >"+"-".repeat(56)+"\n");
-			}
-			else { // 경력
-				sb.append("-< "+Transaction.experience(Integer.parseInt(map.get("search")))+" 경력 검색결과 >"+"-".repeat(56)+"\n");
-			}
-			sb.append("채용공고순번\t 회사명\t직종\t\t제목\t\t경력\t채용형태\t마감일\n"+
-					  "-".repeat(74)+"\n");
-			
-			for(int i=0; i<RecruitmentList.size(); i++) {
-				sb.append(RecruitmentList.get(i).getRecruitmentId()+"\t"+" "+
-						  RecruitmentList.get(i).getComdto().getName()+"\t"+
-						  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
-						  RecruitmentList.get(i).getTitle()+"\t\t"+
-						  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
-						  Transaction.empType(RecruitmentList.get(i).getEmpType())+"\t"+
-						  RecruitmentList.get(i).getDeadlineday()+"\n");
-			} // end of for()--------------------------
-			sb.append("-".repeat(74));
-			System.out.println(AlignUtil.tab(sb).toString());
+			do {
+				///////////////////////////////////////////////////////////////
+				StringBuilder sb = new StringBuilder(); // 검색결과를 반복해서 출력하기 위해 StringBuilder 선언 위치를 변경함 - 김규빈
+				
+				if(map.get("status").equals("1")) { // 회사명
+					sb.append(AlignUtil.title("-"+map.get("search")+" 회사명 검색결과", 83));
+				}
+				else if(map.get("status").equals("2")) { // 직종별
+					sb.append(AlignUtil.title("-"+ RecruitmentList.get(0).getJobdto().getName()+" 직종 검색결과", 83));
+				}
+				else if(map.get("status").equals("3")) { // 지역별
+					sb.append(AlignUtil.title("-"+map.get("search")+" 지역 검색결과", 83));
+				}
+				else { // 경력
+					sb.append(AlignUtil.title("-"+Transaction.experience(Integer.parseInt(map.get("search")))+" 경력 검색결과", 83));
+				}
+				sb.append("채용공고순번\t 회사명\t\t직종\t\t제목\t\t경력\t채용형태\t마감일\n"+
+						  "-".repeat(83)+"\n");
+				
+				for(int i=0; i<RecruitmentList.size(); i++) {
+					sb.append(RecruitmentList.get(i).getRecruitmentId()+"\t"+" "+
+							  RecruitmentList.get(i).getComdto().getName()+"\t\t"+
+							  RecruitmentList.get(i).getJobdto().getName()+"\t\t"+
+							  RecruitmentList.get(i).getTitle()+"\t\t"+
+							  Transaction.experience(RecruitmentList.get(i).getExperience()) +"\t"+
+							  Transaction.empType(RecruitmentList.get(i).getEmpType())+"\t"+
+							  RecruitmentList.get(i).getDeadlineday()+"\n");
+				} // end of for()--------------------------
+				sb.append("-".repeat(83));
+				System.out.println(AlignUtil.tab(sb).toString());
+				
+				boolean isReturn = recruitmentInfo(sc,applicant); // 채용공고 상세보기
+				// 채용공고번호 입력을 잘못했을 때, 입사지원을 하지 않고 돌아가기를 선택한 경우 false 반환 - 김규빈
+				// 즉, 위의 두 가지 경우에는 검색 결과를 다시 출력하도록 함
+				
+				if(isReturn) {
+					return;
+				}
+				///////////////////////////////////////////////////////////////
+			} while(true);
 		}
 		
-		do {
-			////////////////////////////////////////////////////////////////////
-			System.out.println("\n"+"=".repeat(10)+"< 메뉴 >"+"=".repeat(10));
-			System.out.println("1.채용공고 상세보기   0.돌아가기");
-			System.out.println("=".repeat(27));
-			
-			System.out.print("▷ 검색메뉴번호 입력 : ");
-			String menu = sc.nextLine();
-			
-			switch (menu) {
-			case "1": // 채용공고 상세보기
-				recruitmentInfo(sc,applicant); // 채용공고 상세보기
-				break;
-	
-			case "0": // 돌아가기
-				
-				return;
-			default:
-				System.out.println(">> [경고] 입력하신 메뉴 번호 "+menu+"는 존재하지 않습니다. <<\n");
-				break;
-			}
-			////////////////////////////////////////////////////////////////////
-		} while(true);
 		
 	}
 
 
 	
 	// 채용공고 상세보기
-	private void recruitmentInfo(Scanner sc,ApplicantDTO applicant) {
+	// 채용공고번호 입력을 잘못했을 때, 입사지원을 하지 않고 돌아가기를 선택한 경우 false 반환 - 김규빈
+	// 나머지는 true 반환
+	private boolean recruitmentInfo(Scanner sc,ApplicantDTO applicant) {
 
 		StringBuilder sb = new StringBuilder();
 		
-		System.out.print("▷ 채용공고순번 입력 : ");
+		System.out.print("▷ 채용공고순번 입력[0: 취소] : ");
 		String recruitmentId = sc.nextLine();
+		
+		if("0".equals(recruitmentId)) { // 0을 입력한 경우 - 김규빈
+			return true;
+		}
 		
 		RecruitmentDTO recruitmentDTO = rdao.recruitmentInfoSelect(recruitmentId);
 		
 		if(recruitmentDTO==null) { // 채용공고가 존재하지 않거나 문자로 입력한 경우
 			System.out.println(">> 입력하신 글번호 "+recruitmentId+"은 존재하지 않습니다. <<\n");
-			return;
+			return false;
 		}
 		else { // 만약 채용공고가 있을 경우
 			System.out.println("=== 채용공고 상세보기 ===");
@@ -244,7 +240,7 @@ public class RecruitmentApplicantController {
 					
 					if(result == true) {
 						System.out.println("\n>> [경고] 중복된 입사지원입니다. <<");
-						return; // 중복된 지원일 경우 메소드 종료
+						return true; // 중복된 지원일 경우 메소드 종료
 					}
 					//////////////////////////////////
 					
@@ -276,11 +272,11 @@ public class RecruitmentApplicantController {
 					apply_Applicant(sc,resumeDAO,applicant,recruitmentId); 
 					
 					
-					return;
+					return true;
 					
 				case "0": // 돌아가기
 					
-					return;
+					return false;
 	
 				default:
 					System.out.println(">> [경고] 입력하신 메뉴 번호 "+menu+"는 존재하지 않습니다. <<\n");

@@ -9,11 +9,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import applicant.domain.ApplicantDTO;
-import company.domain.CompanyDTO;
 import job.controller.JobController;
 import review.domain.ReviewDTO;
 import review.model.ReviewDAO;
 import review.model.ReviewDAO_imple;
+import utils.AlignUtil;
 import utils.DisplayScore;
 import utils.Msg;
 
@@ -78,31 +78,23 @@ public class ReviewController {
 		}
 		else {
 			StringBuilder sb = new StringBuilder();
-			sb.append("-< 작성한 리뷰 목록 >--------------------------------\n"
-					 + "번호\t회사명\t총점\t내용\t\t최종수정일\n"
-					 + "-".repeat(50)+"\n");
+			sb.append(AlignUtil.title("-작성한 리뷰 목록", 66)
+					 + "번호\t회사명\t\t총점\t내용\t\t\t최종수정일\n"
+					 + "-".repeat(66)+"\n");
 			
 			for(int i=0; i<reviewList.size(); i++) {
 				sb.append(reviewList.get(i).getReviewId() + "\t"
-						+ reviewList.get(i).getCompanyName() + "\t"
+						+ reviewList.get(i).getCompanyName() + "\t\t"
 						+ DisplayScore.getStar(reviewList.get(i).getScore()) + "\t"
-						+ align(reviewList.get(i).getContents(), 15)
+						+ reviewList.get(i).getContents() + "\t\t\t"
 						+ reviewList.get(i).getUpdateday() + "\n");
 			}
 			
-			sb.append("-".repeat(50));
-			System.out.println(sb.toString());
+			sb.append("-".repeat(66));
+			System.out.println(AlignUtil.tab(sb).toString());
 			return true;
 		}
 		
-	}
-	
-	/*
-	 * 제목 정렬을 위한 메소드
-	 * 숫자만큼 뒤에 띄어쓰기를 맞춰준다.
-	 */
-	private String align(String str, int n) {
-		return str +" ".repeat(n-str.length());
 	}
 	
 	
@@ -377,7 +369,7 @@ public class ReviewController {
 			sb.append("\n=== 리뷰 목록 ===\n");
 			
 			for(int i=0; i<reviewList.size(); i++) {
-				sb.append("-< "+reviewList.get(i).getApplicantName()+"님의 리뷰 >----------------------------------\n");
+				sb.append(AlignUtil.title("-"+reviewList.get(i).getApplicantName()+"님의 리뷰"));
 				sb.append("직종\t" + reviewList.get(i).getJobName() + "\n"
 						+ "총점\t" + DisplayScore.getStar(reviewList.get(i).getScore()) + "\n"
 						+ "최종수정일" + reviewList.get(i).getUpdateday() + "\n"
@@ -406,7 +398,7 @@ public class ReviewController {
 		else {
 			StringBuilder sb = new StringBuilder();
 			
-			sb.append("-< '"+reviewAvgMap.get("company_name")+"'의 최근 5년간 리뷰 통계 >---------------------\n");
+			sb.append(AlignUtil.title("-'"+reviewAvgMap.get("company_name")+"'의 최근 5년간 리뷰 통계"));
 			sb.append("총점\t" + DisplayScore.getStar(Float.parseFloat(reviewAvgMap.get("score"))) + "\n"
 					+ "연봉·급여\t" + DisplayScore.getBar(Integer.parseInt(reviewAvgMap.get("score_salary"))) + "\n"
 					+ "워라밸\t" + DisplayScore.getBar(Integer.parseInt(reviewAvgMap.get("score_wlb"))) + "\n"

@@ -11,6 +11,8 @@ import job.domain.JobDTO;
 import resume.domain.ResumeDTO;
 import resume.model.ResumeDAO;
 import resume.model.ResumeDAO_imple;
+import utils.AlignUtil;
+import utils.Msg;
 
 
 public class Resumecontroller {
@@ -31,11 +33,15 @@ public class Resumecontroller {
 		StringBuilder sb = new StringBuilder();
 		String menumno = "";
 		do {
+			System.out.println("\n=== 이력서 관리 ===");
 			int n = 0; // 1이면 입사지원 탭 n 아니면 다른 것 ex_ 1이면 == 입사지원 ==  그 외 == 이력서 관리 ==
 			
 			boolean completed = resumeDAO.resume_Completed(applicant);
 			if(completed == true) {
 				resumeInfo(sb,jobDTO,resumeDTO,resumeDAO,applicant,n);
+			}
+			else {
+				Msg.N("작성된 이력서가 없습니다. 이력서를 새로 등록해주세요.");
 			}
 			
  		
@@ -46,7 +52,7 @@ public class Resumecontroller {
  		
  		
 		
-			System.out.println("=====< 메뉴 >======================\n"
+			System.out.println("=============< 메뉴 >==============\n"
 								+ "1.이력서 작성  2.이력서 수정  0.돌아가기\n"
 								+ "==================================\n");
 			
@@ -160,7 +166,7 @@ public class Resumecontroller {
 			
 			//희망근무지역
 			do {
-				System.out.print("\n[서울,경기도,충청도,전라도] \n"
+				System.out.print("\n[서울특별시,경기도,강원도,경상북도,경상남도,부산광역시,제주도] \n"
 								+ "▷ 희망근무지역[위의 지역 중 선택하세요!] : ");
 				hope_location = sc.nextLine();
 
@@ -168,9 +174,11 @@ public class Resumecontroller {
 					System.out.println("\n[경고] 지역을 입력하세요! \n");
 					continue;
 				}
-				else if(!(hope_location.equals("서울") || hope_location.equals("경기도") 
-						|| hope_location.equals("충청도") || hope_location.equals("전라도"))) {
-					System.out.println(">> [경고] [서울,경기도,충청도,전라도] 중 입력하세요! << \n");
+				else if(!(hope_location.equals("서울특별시") || hope_location.equals("경기도") 
+						|| hope_location.equals("강원도") || hope_location.equals("경상북도")
+						|| hope_location.equals("경상남도") || hope_location.equals("부산광역시")
+						|| hope_location.equals("제주도"))) {
+					System.out.println(">> [경고] [서울특별시,경기도,강원도,경상북도,경상남도,부산광역시,제주도] 중 입력하세요! << \n");
 				}
 				else {
 					is_Exit = true;
@@ -247,7 +255,7 @@ public class Resumecontroller {
 		   do {
 			   try {
 				   
-					System.out.print("희망연봉 : ");
+					System.out.print("희망연봉[단위: 만원] : ");
 					str_Hope_salary = sc.nextLine();
 					
 					if(str_Hope_salary.isBlank()){
@@ -448,7 +456,7 @@ public class Resumecontroller {
 		
 		//희망근무지역
 		do {
-			System.out.print("\n[서울,경기도,충청도,전라도] \n"
+			System.out.print("\n[서울특별시,경기도,강원도,경상북도,경상남도,부산광역시,제주도] \n"
 							+ "▷ 희망근무지역[위의 지역 중 선택하세요!] : ");
 			hope_location = sc.nextLine();
 
@@ -458,9 +466,11 @@ public class Resumecontroller {
 				is_Exit = true;
 				
 			}
-			else if(!(hope_location.equals("서울") || hope_location.equals("경기도") 
-					|| hope_location.equals("충청도") || hope_location.equals("전라도"))) {
-				System.out.println("[경고] [서울,경기도,충청도,전라도] 중 입력하세요! \n");
+			else if(!(hope_location.equals("서울특별시") || hope_location.equals("경기도") 
+					|| hope_location.equals("강원도") || hope_location.equals("경상북도")
+					|| hope_location.equals("경상남도") || hope_location.equals("부산광역시")
+					|| hope_location.equals("제주도"))) {
+				System.out.println(">> [경고] [서울특별시,경기도,강원도,경상북도,경상남도,부산광역시,제주도] 중 입력하세요! <<\n");
 			}
 			else {
 				is_Exit = true;
@@ -479,7 +489,7 @@ public class Resumecontroller {
 		do {
 			   try {
 				   
-					System.out.print("희망연봉 : ");
+					System.out.print("희망연봉[단위: 만원] : ");
 					str_Hope_salary = sc.nextLine();
 					
 					if(str_Hope_salary.isBlank()){
@@ -550,14 +560,8 @@ public class Resumecontroller {
 		sb = new StringBuilder();
 		if(n==1) {
 			sb.append("\n=== 입사지원 ===\n");
-		}else {
-			sb.append("=== 이력서 관리 ===\n");
 		}
-		sb.append("-< "+ applicant.getName() +"님의 이력서 >-------------------------------------------\n");
-		sb.append("경력     학력    희망근무지역      희망직종       직무기술   희망연봉\n");
-		sb.append("-------------------------------------------------------------");
-
-		System.out.println(sb.toString());
+		sb.append(AlignUtil.title("-"+ applicant.getName() +"님의 이력서", 50)) ;
 		/*
 		 ex 신입 	남서울대학교	서울	백엔드	Spring	3,000만원
 		*/
@@ -565,14 +569,16 @@ public class Resumecontroller {
  		resumeDTO = resumeDAO.list_Resume(applicant); // 이력서 관리(이력서를 보여줌)
  		
  		
- 		sb = new StringBuilder(); //StringBuilder 초기화
+ 		sb.append("경력 : " + Transaction.experience((resumeDTO.getExperience())) +"\n"
+ 				+ "학력 : "+ Transaction.education(resumeDTO.getEducation()) + "\n"
+ 				+ "희망근무지역 : " + resumeDTO.getHope_location() + "\n"
+ 				+ "희망직종 : " + resumeDTO.getJobDTO().getName() + "\n" //getName -> 희망직종
+ 				+ "직무기술 : " + resumeDTO.getJob_description() + "\n"
+ 				+ "희망연봉 : " + Transaction.salary(resumeDTO.getHope_salary()) + "\n");
  		
+		sb.append("-".repeat(50));
  		
- 		sb.append(Transaction.experience((resumeDTO.getExperience())) +"   "+Transaction.education(resumeDTO.getEducation())   + "   " +
- 				resumeDTO.getHope_location() + "        " + resumeDTO.getJobDTO().getName() + "       " + //getName -> 희망직종
- 				resumeDTO.getJob_description() + "      " + resumeDTO.getHope_salary());
- 		
- 		System.out.println(sb.toString()); 
+ 		System.out.println(AlignUtil.tab(sb).toString()); 
  		
  		return resumeDTO;
 	}

@@ -644,28 +644,31 @@ public class RecruitmentController {
 	
 	// === 채용공고 통계 조회 메뉴 === //
 	public void recruitmentStatistics(Scanner sc) {
-		System.out.println("=== 채용공고 통계 조회 ===");
-		
-		System.out.print(AlignUtil.title("=메뉴 선택")
-					   + "1.직종별 채용공고 수 순위   2.직종별 평균 연봉 순위\n"
-					   + "0.돌아가기\n"
-					   + "=".repeat(50)+"\n"
-					   + "▷ 메뉴 번호 선택 : ");
-		
-		String menu = sc.nextLine();
-		switch (menu) {
-		case "0":
-			return;
-		case "1": // 직종별 채용공고 순위
-			getRecruitmentStatistics(menu);
-			break;
-		case "2": // 직종별 연봉 순위
-			getRecruitmentStatistics(menu);
-			break;
-
-		default:
-			break;
-		}
+		do {
+			System.out.println("=== 채용공고 통계 조회 ===");
+			
+			System.out.print(AlignUtil.title("=메뉴 선택")
+						   + "1.직종별 채용공고 수 순위   2.직종별 평균 연봉 순위\n"
+						   + "0.돌아가기\n"
+						   + "=".repeat(50)+"\n"
+						   + "▷ 메뉴 번호 선택 : ");
+			
+			String menu = sc.nextLine();
+			switch (menu) {
+			case "0":
+				return;
+			case "1": // 직종별 채용공고 순위
+				getRecruitmentStatistics(menu);
+				break;
+			case "2": // 직종별 연봉 순위
+				getRecruitmentStatistics(menu);
+				break;
+	
+			default:
+				Msg.W("메뉴에 없는 번호입니다.");
+				break;
+			}
+		} while(true);
 		
 	}
 
@@ -686,9 +689,11 @@ public class RecruitmentController {
 					+ "순위\t직종\t\t"+menuStr+"\n"
 					+ "-".repeat(50)+"\n");
 			for(Map<String, String> rsMap : rsMapList) {
+				String result = "1".equals(status) ?
+						rsMap.get("result") : Transaction.salary(Integer.parseInt(rsMap.get("result")));
 				sb.append(rsMap.get("rank") + "\t"
 						+ rsMap.get("jobName") + "\t\t"
-						+ rsMap.get("result") + "\n");
+						+ result + "\n");
 			}
 			sb.append("-".repeat(50));
 			System.out.println(AlignUtil.tab(sb).toString());

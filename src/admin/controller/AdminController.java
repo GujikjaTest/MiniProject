@@ -25,6 +25,7 @@ import review.domain.ReviewAuthDTO;
 import review.model.ReviewAuthDAO;
 import review.model.ReviewAuthDAO_imple;
 import statistics.controller.StatisticsController;
+import utils.AlignUtil;
 import utils.Msg;
 import utils.ValidationUtil;
 
@@ -43,7 +44,7 @@ public class AdminController {
 
 	private final NotificationController notificationController = new NotificationController(); // 공지사항 Controller 인스턴스
 	
-	//private final StatisticsController statisticsController = new StatisticsController(); // 통계 조회 Controller 인스턴스
+	private final StatisticsController statisticsController = new StatisticsController(); // 통계 조회 Controller 인스턴스
 
 	private StringBuilder sb = new StringBuilder(); // StringBuilder 객체 초기화
 
@@ -127,7 +128,7 @@ public class AdminController {
 				break;
 			}
 			case "5": { // 통계
-				//statisticsController.statisticsMenu(adminDTO, sc);
+				statisticsController.statisticsMenu(adminDTO, sc);
 				break;
 			}
 			default:
@@ -517,24 +518,22 @@ public class AdminController {
 		String tab = ""; // 출력 간격을 조절하기 위한 tab
 		sb.setLength(0); // StringBuilder 초기화
 
-		System.out.println("\n-< 현재 대기중인 회사 인증 요청 목록 >" + "-".repeat(30));
-		System.out.println("순번\t구직자 성명\t구직자 아이디\t회사명\t회사아이디");
-		System.out.println("-".repeat(60));
+		System.out.print("\n"+AlignUtil.title("-현재 대기중인 회사 인증 요청 목록", 70));
+		System.out.println("순번\t구직자 성명\t구직자 아이디\t회사명\t\t회사아이디");
+		System.out.println("-".repeat(70));
 
 		// ReviewAuthDAO_imple로부터 회사 인증 요청 목록 반환
 		reviewAuthList = reviewAuthDAO.getReqReviewAuthList();
 
 		for (ReviewAuthDTO reviewAuthDTO : reviewAuthList) {
-			tab = reviewAuthDTO.getFkApplicantId().length() < 8 ? "\t\t" : "\t"; // tab 간격 조절
-			
 			sb.append(reviewAuthDTO.getReviewAuthId() + "\t");
 			sb.append(reviewAuthDTO.getApplicantName() + "\t\t");
-			sb.append(reviewAuthDTO.getFkApplicantId() + tab);
-			sb.append(reviewAuthDTO.getCompanyName() + "\t");
+			sb.append(reviewAuthDTO.getFkApplicantId() + "\t\t");
+			sb.append(reviewAuthDTO.getCompanyName() + "\t\t");
 			sb.append(reviewAuthDTO.getFkCompanyId() + "\n");
 		}
 
-		System.out.println(sb.toString());
+		System.out.println(AlignUtil.tab(sb).toString());
 
 		return reviewAuthList;
 	}

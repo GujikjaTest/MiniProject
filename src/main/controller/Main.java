@@ -43,6 +43,8 @@ public class Main {
 		} while(!"0".equals(menu));
 		
 		sc.close();
+		
+		Msg.N("저희 프로그램을 이용해 주셔서 감사합니다. 좋은 하루 되세요!(*´▽`*)");
 	}
 
 }
