@@ -332,23 +332,20 @@ public class RecruitmentController {
 		String deadlineday; // 채용마감일자 전역변수
 		do {
 			/////////////////////////////////////////////
-			System.out.print("▷ 채용마감일자[1999-01-01] : ");
+			Date todayDate = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false); // 입력한 deadlineday 가 실제 달력에 있는지 확인
+			String nowDate = sdf.format(todayDate);
+			
+			System.out.print("▷ 채용마감일자["+nowDate+"] : ");
 			deadlineday = sc.nextLine();
 			
 			if(deadlineday.isBlank()) {
 				Msg.W("채용마감일자는 필수 입력사항입니다.");
 			}
 			else {
-			
-				Date now = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				sdf.setLenient(false); // 입력한 deadlineday 가 실제 달력에 있는지 확인
-				String nowDate = sdf.format(now);
-		
 				try {
 					Date newDate = sdf.parse(deadlineday); // 새로 수정할 날짜
-					
-					Date todayDate = sdf.parse(nowDate);   // 현재 날짜
 					
 					if(newDate.before(todayDate)) {
 						System.out.println(">> [경고] 채용마감일자는 현재 날짜보다 이후로 입력해주세요 <<\n");
@@ -554,7 +551,12 @@ public class RecruitmentController {
 		String deadlineday;
 		do {
 			/////////////////////////////////////////////
-			System.out.print("▷ 채용마감일자[1999-01-01] : ");
+			Date todayDate = new Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			sdf.setLenient(false); // 입력한 deadlineday 가 실제 달력에 있는지 확인
+			String nowDate = sdf.format(todayDate);
+			
+			System.out.print("▷ 채용마감일자["+nowDate+"] : ");
 			deadlineday = sc.nextLine();
 			
 			if(deadlineday.isEmpty()) {
@@ -562,16 +564,8 @@ public class RecruitmentController {
 				break;
 			}
 			else {
-			
-				Date now = new Date();
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				sdf.setLenient(false); // 입력한 deadlineday 가 실제 달력에 있는지 확인
-				String nowDate = sdf.format(now);
-		
 				try {
 					Date newDate = sdf.parse(deadlineday); // 새로 수정할 날짜
-					
-					Date todayDate = sdf.parse(nowDate);   // 현재 날짜
 					
 					if(newDate.before(todayDate)) {
 						System.out.println(">> [경고] 채용마감일자는 현재 날짜보다 이후로 입력해주세요 <<\n");
@@ -598,7 +592,9 @@ public class RecruitmentController {
 		recruitmentDTO.setPeople(people);
 		recruitmentDTO.setSalary(salary);
 		recruitmentDTO.setDeadlineday(deadlineday);
-		recruitmentDTO.setUpdateday(deadlineday);
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		recruitmentDTO.setUpdateday(sdf.format(new Date()));
 		
 		int n = rdao.recruitmentUpdate(recruitmentDTO);
 		
