@@ -30,9 +30,9 @@ public class DisplayScore {
 
 	// 총 100/5(==100/div)점을 막대 num/div개로 반환해주는 메소드
 	public static String getBar(int num) {
-		int div = 5;
-		int n = num/div;
-		return "■".repeat(n) + "□".repeat(100/div-n) + " "+ num;
+		double div = 5;
+		int n = (int) Math.round(num/div);
+		return "■".repeat(n) + "□".repeat((int)Math.round(100/div)-n) + " "+ num;
 	}
 	
 	private DisplayScore() {}
