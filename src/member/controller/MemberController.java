@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import applicant.controller.ApplicantController;
 import applicant.domain.ApplicantDTO;
+import utils.AlignUtil;
 import utils.Msg;
 import company.controller.CompanyController;
 import company.domain.CompanyDTO;
@@ -20,10 +21,10 @@ public class MemberController {
 	// method
 	// === 멤버 회원가입 === //
 	public void register(Scanner sc) {
-		System.out.println("\n=====< 회원가입 >=====\n"
+		System.out.println("\n"+AlignUtil.title("=회원가입", 28)
 						 + "1.구직자   2.구인회사\n"
 						 + "0.돌아가기\n"
-						 + "======================\n");
+						 + "=".repeat(28));
 		System.out.print("▷ 메뉴 번호 선택 : ");
 		String menu = sc.nextLine();
 		
@@ -49,10 +50,10 @@ public class MemberController {
 	// === 멤버 로그인 메뉴 === //
 	public void login(Scanner sc) {
 		do {
-			System.out.println("\n==========< 로그인 >============\r\n"
-						 	 + "1.구직자   2.구인회사   3.관리자\r\n"
-							 + "0.돌아가기\r\n"
-							 + "================================");
+			System.out.println("\n" + AlignUtil.title("=로그인", 28)
+						 	 + "1.구직자   2.구인회사   3.관리자\n"
+							 + "0.돌아가기\n"
+							 + "=".repeat(28));
 			System.out.print("▷ 메뉴 번호 선택 : ");
 			String menu = sc.nextLine();
 			

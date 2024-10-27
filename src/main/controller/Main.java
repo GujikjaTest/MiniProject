@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 import common.ProjectDBConnection;
 import member.controller.MemberController;
+import utils.AlignUtil;
 import utils.Msg;
 
 public class Main {
@@ -15,10 +16,22 @@ public class Main {
 		String menu;
 		
 		do {
-			System.out.println("\n=====< 메인메뉴 >=====\n"
-					+ "1. 회원가입   2. 로그인\n"
-					+ "0. 프로그램 종료\n"
-					+ "====================");
+			System.out.println("=".repeat(60) + "\n"
+							 + " ____                                               __      \n"
+							 + "/\\  _`\\                                      __    /\\ \\__   \n"
+							 + "\\ \\ \\L\\ \\      __     ___    _ __   __  __  /\\_\\   \\ \\ ,_\\  \n"
+							 + " \\ \\ ,  /    /'__`\\  /'___\\ /\\`'__\\/\\ \\/\\ \\ \\/\\ \\   \\ \\ \\/  \n"
+							 + "  \\ \\ \\\\ \\  /\\  __/ /\\ \\__/ \\ \\ \\/ \\ \\ \\_\\ \\ \\ \\ \\   \\ \\ \\_ \n"
+							 + "   \\ \\_\\ \\_\\\\ \\____\\\\ \\____\\ \\ \\_\\  \\ \\____/  \\ \\_\\   \\ \\__\\\n"
+							 + "    \\/_/\\/ / \\/____/ \\/____/  \\/_/   \\/___/    \\/_/    \\/__/\n"
+							 + "                                                            \n"
+							 + "                      구인 구직 프로그램                        \n"
+							 + "");
+			System.out.println(AlignUtil.title("=메인 메뉴", 60) 
+					+ "                                                           \n"
+					+ "              1.회원가입   2.로그인   0.프로그램 종료             \n"
+					+ "                                                           \n"
+					+ "=".repeat(60));
 			
 			System.out.print("▷ 메뉴 번호 선택 : ");
 			menu = sc.nextLine();
