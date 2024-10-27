@@ -1,6 +1,7 @@
 package applicant.domain;
 
 import common.Transaction;
+import utils.AlignUtil;
 
 public class ApplicantDTO {
 	
@@ -84,7 +85,7 @@ public class ApplicantDTO {
 	// 구직자 상세보기 출력
 	@Override
 	public String toString() {
-		return "-< " + name + "님 회원정보 >--------------------------------------\n"
+		return AlignUtil.title("-" + name + "님 회원정보")
 		+ " ▣ 아이디 : " + applicantId + "\n"
 		+ " ▣ 비밀번호 : " + passwd + "\n"
 		+ " ▣ 이메일 : " + email + "\n"
@@ -92,6 +93,6 @@ public class ApplicantDTO {
 		+ " ▣ 성별 : " + Transaction.gender(gender) + "\n"
 		+ " ▣ 휴대폰번호 : " + tel + "\n"
 		+ " ▣ 가입상태 : " + Transaction.memberStatus(status) 
-		+ "\n-------------------------------------------------\n";
+		+ "\n"+"-".repeat(50)+"\n";
 	}
 }

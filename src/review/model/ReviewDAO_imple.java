@@ -137,7 +137,8 @@ public class ReviewDAO_imple implements ReviewDAO {
 					   + " ON R.fk_applicant_id = A.applicant_id "
 					   + " JOIN tbl_job J "
 					   + " ON R.fk_job_id = J.job_id "
-					   + " WHERE fk_company_id = ? and R.is_delete = 0 ";
+					   + " WHERE fk_company_id = ? and R.is_delete = 0"
+					   + " ORDER BY NVL(updateday, registerday) ASC ";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, companyId);
